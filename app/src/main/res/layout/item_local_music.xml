@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/nameText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="鼓楼"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/TextTitle"
+        app:layout_constraintEnd_toStartOf="@+id/moreIcon"
+        app:layout_constraintStart_toEndOf="@+id/playIcon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/artistAndAlbumText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="10dp"
+        android:text="赵雷-无法长大"
+        android:textColor="@color/colorTextLight"
+        android:textSize="@dimen/TextSubtitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/nameText"
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
+
+    <ImageView
+        android:id="@+id/moreIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/artistAndAlbumText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/nameText"
+        app:srcCompat="@drawable/ic_more" />
+
+    <ImageView
+        android:id="@+id/playIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/artistAndAlbumText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/nameText"
+        app:srcCompat="@drawable/ic_loadspeaker" />
+</androidx.constraintlayout.widget.ConstraintLayout>
