@@ -4,10 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.dss.swmusic.BaseActivity;
 import com.dss.swmusic.R;
 import com.dss.swmusic.databinding.ActivityLocalMusicBinding;
 
-public class LocalMusicActivity extends AppCompatActivity {
+public class LocalMusicActivity extends BaseActivity {
 
     private ActivityLocalMusicBinding binding;
 

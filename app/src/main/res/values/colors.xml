@@ -11,5 +11,10 @@
 
 <!--    浅色的文字-->
     <color name="colorTextLight">@android:color/secondary_text_light</color>
+<!--正常颜色的文字-->
+    <color name="colorText">#000000</color>
+
+<!--    页面背景灰色-->
+    <color name="colorBackgroundGray">#F8F8F8</color>
 
 </resources>

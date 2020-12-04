@@ -13,6 +13,8 @@ android {
         versionCode 1
         versionName "1.0"
 
+        vectorDrawables.useSupportLibrary = true
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,6 +46,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
 
     implementation 'com.github.cirno-poi:VerifyEditText:1.0.0' // 验证码输入框
+    implementation 'com.github.donkingliang:ConsecutiveScroller:4.4.0' // 持续滑动布局
+    implementation 'de.hdodenhof:circleimageview:3.1.0' // 圆形图片
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
