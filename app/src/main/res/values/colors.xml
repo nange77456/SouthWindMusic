@@ -5,6 +5,10 @@
     <color name="colorAccent">#03DAC5</color>
 
     <color name="colorTheme">#f50057</color>
+    <color name="colorIconMore">#A0A0A0</color>
+
+    <color name="colorText">#000000</color>
+    <color name="colorTextLight">@color/colorIconMore</color>
 
 <!--    忘记密码的文字颜色-->
     <color name="colorForgetPassword">#1E6EFF</color>

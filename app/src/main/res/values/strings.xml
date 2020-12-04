@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SouthWindMusic</string>
+    <string name="app_name">南风音乐</string>
     <string name="entry_login_button_text">手机号登录</string>
     <string name="login_activity_tip">未注册手机号登陆后将自动创建账号</string>
     <string name="login_activity_button_text">下一步</string>
