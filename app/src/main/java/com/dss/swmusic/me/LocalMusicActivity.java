@@ -56,6 +56,8 @@ public class LocalMusicActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
 
+
+
     }
 
     @SuppressLint("RestrictedApi")

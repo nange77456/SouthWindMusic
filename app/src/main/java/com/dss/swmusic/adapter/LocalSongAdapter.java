@@ -1,6 +1,5 @@
 package com.dss.swmusic.adapter;
 
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dss.swmusic.R;
-import com.dss.swmusic.databinding.ItemLocalMusicBinding;
 import com.dss.swmusic.entity.LocalSong;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 本地音乐adapter
+ */
 public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.ViewHolder> {
-
+    /**
+     * 本地音乐列表，由构造函数传入
+     */
     List<LocalSong> songList;
 
     public LocalSongAdapter(List<LocalSong> songList) {
