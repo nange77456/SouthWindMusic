@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
@@ -22,6 +23,7 @@ import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.LocalSongAdapter;
 import com.dss.swmusic.databinding.ActivityLocalMusicBinding;
 import com.dss.swmusic.entity.LocalSong;
+import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,15 @@ public class LocalMusicActivity extends AppCompatActivity {
         startScanLocalMusic();
         adapter.notifyDataSetChanged();
 
-
-
+        adapter.setSongPositionPhone(new Phone1<Integer>() {
+            @Override
+            public void onPhone(Integer position) {
+                LocalSong song = songList.get(position);
+                Intent intent = new Intent(LocalMusicActivity.this,PlayActivity.class);
+                intent.putExtra("clickedSong",song);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -130,7 +139,7 @@ public class LocalMusicActivity extends AppCompatActivity {
 
             LocalSong curr = new LocalSong(name,path,album,artist,size,duration,parent);
 
-            //好像没有用
+            /*//好像没有用
             if (size > 1000 * 800) {
                 // 注释部分是切割标题，分离出歌曲名和歌手 （本地媒体库读取的歌曲信息不规范）
                 if (name.contains("-")) {
@@ -138,7 +147,7 @@ public class LocalMusicActivity extends AppCompatActivity {
                     curr.setArtist(str[0].trim());
                     curr.setName(str[1].trim());
                 }
-            }
+            }*/
             songList.add(curr);
         }
 

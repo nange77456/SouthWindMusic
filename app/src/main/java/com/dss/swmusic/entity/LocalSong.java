@@ -1,9 +1,11 @@
 package com.dss.swmusic.entity;
 
+import java.io.Serializable;
+
 /**
  * 一首曲子
  */
-public class LocalSong {
+public class LocalSong implements Serializable {
     /**歌曲名*/
     private String name;
     /**路径*/

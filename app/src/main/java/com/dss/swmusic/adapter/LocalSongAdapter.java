@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dss.swmusic.R;
 import com.dss.swmusic.entity.LocalSong;
+import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.List;
 
@@ -20,7 +21,15 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
     /**
      * 本地音乐列表，由构造函数传入
      */
-    List<LocalSong> songList;
+    private List<LocalSong> songList;
+    /**
+     * 歌曲位置值回调接口
+     */
+    private Phone1<Integer> songPositionPhone;
+
+    public void setSongPositionPhone(Phone1<Integer> songPositionPhone) {
+        this.songPositionPhone = songPositionPhone;
+    }
 
     public LocalSongAdapter(List<LocalSong> songList) {
         this.songList = songList;
@@ -45,6 +54,13 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_local_music,parent,false);
         ViewHolder holder = new ViewHolder(view);
+        //歌曲的点击事件
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                songPositionPhone.onPhone(holder.getAdapterPosition());
+            }
+        });
         return holder;
     }
 

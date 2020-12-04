@@ -20,17 +20,23 @@
             android:windowSoftInputMode="stateVisible"/>
         <activity android:name=".login.PasswordActivity"
             android:windowSoftInputMode="stateVisible"/>
-        <activity android:name=".me.LocalMusicActivity" />
-        <activity android:name=".login.LoginActivity"
-            android:windowSoftInputMode="stateVisible"/>
-        <activity
-            android:name=".login.EntryActivity"
-            android:theme="@style/EntryTheme">
+        <activity android:name=".me.LocalMusicActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".login.LoginActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity
+            android:name=".login.EntryActivity"
+            android:theme="@style/EntryTheme">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
         <activity android:name=".MainActivity">
 
