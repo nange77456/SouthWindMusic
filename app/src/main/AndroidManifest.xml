@@ -3,6 +3,7 @@
     package="com.dss.swmusic">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -10,28 +11,30 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity android:name=".me.PlayActivity"></activity>
-        <activity android:name=".me.LocalMusicActivity">
+        <activity android:name=".login.VerifyCodeActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".login.SetPasswordActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".login.PasswordActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".me.LocalMusicActivity" />
+        <activity android:name=".login.LoginActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity
+            android:name=".login.EntryActivity"
+            android:theme="@style/EntryTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".login.LoginActivity" />
-        <activity
-            android:name=".login.EntryActivity"
-            android:theme="@style/EntryTheme">
+        <activity android:name=".MainActivity">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

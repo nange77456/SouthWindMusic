@@ -5,10 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.dss.swmusic.BaseActivity;
 import com.dss.swmusic.R;
 import com.dss.swmusic.databinding.ActivityEntryBinding;
 
-public class EntryActivity extends AppCompatActivity {
+public class EntryActivity extends BaseActivity {
 
     private ActivityEntryBinding binding;
 

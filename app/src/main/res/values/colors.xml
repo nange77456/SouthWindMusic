@@ -10,4 +10,10 @@
     <color name="colorText">#000000</color>
     <color name="colorTextLight">@color/colorIconMore</color>
 
+<!--    忘记密码的文字颜色-->
+    <color name="colorForgetPassword">#1E6EFF</color>
+
+<!--    浅色的文字-->
+    <color name="colorTextLight">@android:color/secondary_text_light</color>
+
 </resources>
