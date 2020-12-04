@@ -18,6 +18,8 @@ public class LocalSong {
     private int duration;
     /**歌曲名的拼音，用于字母排序*/
     private String pinyin;
+    /**父文件夹*/
+    private String parent;
 
     /**
      *
@@ -27,16 +29,18 @@ public class LocalSong {
      * @param artist 艺术家
      * @param size 文件大小
      * @param duration 时长
+     * @param parent 父文件夹
      */
-    public LocalSong(String name, String path, String album, String artist, long size, int duration) {
+    public LocalSong(String name, String path, String album, String artist, long size, int duration,String parent) {
         this.name = name;
         this.path = path;
         this.album = album;
         this.artist = artist;
         this.size = size;
         this.duration = duration;
+        this.parent = parent;
         //TODO
-        this.pinyin = "";
+//        this.pinyin = "";
     }
 
     public LocalSong() {
@@ -97,4 +101,14 @@ public class LocalSong {
     public void setPinyin(String pinyin) {
         this.pinyin = pinyin;
     }
+
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
 }

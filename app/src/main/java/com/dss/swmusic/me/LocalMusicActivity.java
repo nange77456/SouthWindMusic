@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -123,10 +124,11 @@ public class LocalMusicActivity extends AppCompatActivity {
             String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
             long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
             int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-//            String pinyin = ;
+            String parent = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_DISPLAY_NAME));
 
-            LocalSong curr = new LocalSong(name,path,album,artist,size,duration);
+            LocalSong curr = new LocalSong(name,path,album,artist,size,duration,parent);
 
+            //好像没有用
             if (size > 1000 * 800) {
                 // 注释部分是切割标题，分离出歌曲名和歌手 （本地媒体库读取的歌曲信息不规范）
                 if (name.contains("-")) {
@@ -134,14 +136,11 @@ public class LocalMusicActivity extends AppCompatActivity {
                     curr.setArtist(str[0].trim());
                     curr.setName(str[1].trim());
                 }
-                //设置拼音首字母
-//                song.setPys(ChineseToLetter.GetFirstPinyin(song.song));
             }
             songList.add(curr);
         }
 
         cursor.close();
-
 
     }
 }

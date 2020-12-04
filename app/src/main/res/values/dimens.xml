@@ -2,7 +2,7 @@
 <resources>
 <!--    音乐列表子项的尺寸，大标题、小标题、三个点-->
     <dimen name="iconSize">20dp</dimen>
-    <dimen name="TextTitle">16sp</dimen>
+    <dimen name="TextTitle">15sp</dimen>
     <dimen name="TextSubtitle">12sp</dimen>
     
 <!--    页边距-->

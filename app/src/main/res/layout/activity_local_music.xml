@@ -23,10 +23,12 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:contentInsetStartWithNavigation="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_return"
-        app:title="@string/title_local_music" />
+        app:title="@string/title_local_music"
+        app:titleMarginStart="0dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
