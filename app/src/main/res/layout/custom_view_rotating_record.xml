@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <ImageView
         android:id="@+id/record"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="125dp"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="105dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,10 +20,10 @@
 
     <ImageView
         android:id="@+id/pin"
-        android:layout_width="114.3dp"
-        android:layout_height="208.125dp"
+        android:layout_width="100dp"
+        android:layout_height="163dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.619"
+        app:layout_constraintHorizontal_bias="0.662"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/pin" />
@@ -33,5 +34,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/cover"
+        android:layout_width="165dp"
+        android:layout_height="165dp"
+        android:src="@drawable/profile"
+        app:civ_border_color="@color/colorText"
+        app:civ_border_width="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/record"
+        app:layout_constraintEnd_toEndOf="@+id/record"
+        app:layout_constraintStart_toStartOf="@+id/record"
+        app:layout_constraintTop_toTopOf="@+id/record" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
