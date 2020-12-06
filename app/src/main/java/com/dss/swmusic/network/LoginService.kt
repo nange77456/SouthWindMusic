@@ -1,9 +1,6 @@
 package com.dss.swmusic.network
 
-import com.dss.swmusic.network.bean.CheckPhoneResult
-import com.dss.swmusic.network.bean.LoginResult
-import com.dss.swmusic.network.bean.ResetPwResult
-import com.dss.swmusic.network.bean.SendVerifyCodeResult
+import com.dss.swmusic.network.bean.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -45,6 +42,8 @@ interface LoginService {
     @GET("/register/cellphone")
     fun resetPassword(@Query("phone") phone: String,
                       @Query("password") password:String,
-                      @Query("captcha") captcha: String):Call<ResetPwResult>
+                      @Query("captcha") captcha: String):Call<LoginResult>
+
+
 
 }

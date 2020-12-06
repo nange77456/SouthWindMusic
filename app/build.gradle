@@ -48,6 +48,9 @@ dependencies {
     implementation 'com.github.cirno-poi:VerifyEditText:1.0.0' // 验证码输入框
     implementation 'com.github.donkingliang:ConsecutiveScroller:4.4.0' // 持续滑动布局
     implementation 'de.hdodenhof:circleimageview:3.1.0' // 圆形图片
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4' // RecyclerViewAdapter 封装
+    implementation 'com.github.bumptech.glide:glide:4.11.0'  // glide
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // glide
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

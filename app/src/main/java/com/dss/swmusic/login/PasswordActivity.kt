@@ -9,9 +9,11 @@ import android.widget.Toast
 import com.dss.swmusic.BaseActivity
 import com.dss.swmusic.MainActivity
 import com.dss.swmusic.databinding.ActivityPasswordBinding
+import com.dss.swmusic.entity.UserBaseData
 import com.dss.swmusic.network.LoginService
 import com.dss.swmusic.network.ServiceCreator
 import com.dss.swmusic.network.bean.LoginResult
+import com.dss.swmusic.util.UserBaseDataUtil
 import kotlinx.android.synthetic.main.activity_password.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -70,6 +72,9 @@ class PasswordActivity : BaseActivity() {
                 if(loginResult?.code == 200){
                     // 登录成功
                     Toast.makeText(this@PasswordActivity,"登录成功",Toast.LENGTH_SHORT).show()
+                    // 保存用户基本数据
+                    UserBaseDataUtil.setUserBaseData(loginResult)
+
                     // 跳转到主页面
                     val intent = Intent(this@PasswordActivity,MainActivity::class.java)
                     startActivity(intent)

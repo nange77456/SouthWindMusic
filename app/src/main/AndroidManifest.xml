@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:name=".MyApplication"
         android:usesCleartextTraffic="true">
         <activity android:name=".me.PlayActivity"></activity>
         <activity android:name=".login.VerifyCodeActivity"
@@ -26,14 +27,14 @@
         <activity
             android:name=".login.EntryActivity"
             android:theme="@style/EntryTheme">
+
+        </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/TranslucentStatusTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".MainActivity">
-
         </activity>
     </application>
 

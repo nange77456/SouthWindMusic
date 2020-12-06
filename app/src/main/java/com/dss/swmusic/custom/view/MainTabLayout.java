@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
@@ -17,17 +18,12 @@ import java.util.List;
 
 public class MainTabLayout extends LinearLayout {
 
-    private ViewPager2 viewPager2 = null;
+    private ViewPager viewPager = null;
 
     /**
      * ViewPager 的当前页
      */
     private int curPageIndex = 0;
-
-    /**
-     * 上一个 positionOffset，用来判断滑动方向
-     */
-    private float lastPositionOffset = 0;
 
     /**
      * 选中状态的文字大小，单位为sp
@@ -48,6 +44,11 @@ public class MainTabLayout extends LinearLayout {
      * 未选中的文字颜色
      */
     private int unSelectTextColor = Color.GRAY;
+
+    /**
+     * 是否开启监听滚动
+     */
+    private boolean listenerScrollFlag = true;
 
     // 什么用？写了也看不懂
     private int temp = 0;
@@ -75,20 +76,13 @@ public class MainTabLayout extends LinearLayout {
 
 
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        for(int i=0;i<getChildCount();++i){
-            MainTabItem child = (MainTabItem) getChildAt(i);
-            tabItems.add(child);
-        }
-    }
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         ((LayoutParams)params).weight = 1;
         ((LayoutParams)params).width = LayoutParams.MATCH_PARENT;
         MainTabItem item = (MainTabItem) child;
+        tabItems.add(item);
         if(temp == 0){
             item.setTextColor(selectTextColor);
             item.setTextSize(selectTextSize);
@@ -96,19 +90,46 @@ public class MainTabLayout extends LinearLayout {
             item.setTextColor(unSelectTextColor);
             item.setTextSize(unSelectTextSize);
         }
+        item.setOnClickListener(v->{
+            if(viewPager != null){
+                int choose = tabItems.indexOf(item);
+                viewPager.setCurrentItem(choose);
+                listenerScrollFlag = false;
+                setCurrentSelect(choose);
+//                listenerScrollFlag = true;
+            }
+        });
         temp++;
         super.addView(child, index, params);
     }
 
+    public void setCurrentSelect(int index){
+        if(index < 0 || index >= tabItems.size()){
+            return;
+        }
+        if(viewPager != null){
+            viewPager.setCurrentItem(index);
+        }
+        for(int i=0;i<tabItems.size();++i){
+            MainTabItem item = tabItems.get(i);
+            if(i == index){
+                item.setTextSize(selectTextSize);
+                item.setTextColor(selectTextColor);
+            }else{
+                item.setTextSize(unSelectTextSize);
+                item.setTextColor(unSelectTextColor);
+            }
+        }
+    }
+
     /**
      * 设置ViewPager
-     * @param viewPager2
+     * @param viewPager
      */
-    public void setViewPager2(ViewPager2 viewPager2){
-        this.viewPager2 = viewPager2;
+    public void setViewPager(ViewPager viewPager){
+        this.viewPager = viewPager;
 
-        this.viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-
+        this.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             boolean scrollFlag = false;
 
             int cur;
@@ -118,7 +139,6 @@ public class MainTabLayout extends LinearLayout {
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
 //                Log.e("MeDebug","onPageScrolled "+position+","+positionOffset+","+positionOffsetPixels);
 
 //                Log.e("MyDebug","positio="+position+",curPage="+curPageIndex);
@@ -153,21 +173,97 @@ public class MainTabLayout extends LinearLayout {
 
             @Override
             public void onPageSelected(int position) {
-                super.onPageSelected(position);
                 curPageIndex = position;
 //                Log.e("MeDebug","position = "+position);
 //                scrollFlag = false;
 //                flag2 = false;
             }
 
-
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if(state == ViewPager2.SCROLL_STATE_IDLE && !listenerScrollFlag){
+                    // 别问为什么，反正你回头看这行代码肯定想不明白，不要改就行了
+                    listenerScrollFlag = true;
+                }
+                if(state == ViewPager2.SCROLL_STATE_IDLE){
+                    setCurrentSelect(curPageIndex);
+                }
+            }
         });
+//        this.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+//
+//            boolean scrollFlag = false;
+//
+//            int cur;
+//            int next;
+//
+//            float lastPositionOffset = 0;
+//
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+////                Log.e("MeDebug","onPageScrolled "+position+","+positionOffset+","+positionOffsetPixels);
+//
+////                Log.e("MyDebug","positio="+position+",curPage="+curPageIndex);
+//
+//                // 这里为什么这么写？别想了，反正就这样
+//                if(Math.abs(lastPositionOffset-positionOffset) > 0.8 || positionOffset == 0){
+//                    scrollFlag = false;
+//                }
+//
+//                if(!scrollFlag && positionOffset != 0){
+//                    cur = curPageIndex;
+//                    if(positionOffset < (1-positionOffset)){
+//                        // 向右滑
+//                        next = curPageIndex+1;
+//                        Log.e("MeDebug","向右滑,next="+next);
+//                    }else{
+//                        next = curPageIndex -1;
+//                        Log.e("MeDebug","向左滑,next="+next);
+//                    }
+//                    scrollFlag = true;
+//                }
+//                if(scrollFlag){
+//                    if(cur < next)
+//                        onScrolled(cur,next,positionOffset);
+//                    else
+//                        onScrolled(cur,next,1-positionOffset);
+//                }
+//
+//                lastPositionOffset = positionOffset;
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//                super.onPageSelected(position);
+//                curPageIndex = position;
+////                Log.e("MeDebug","position = "+position);
+////                scrollFlag = false;
+////                flag2 = false;
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//                super.onPageScrollStateChanged(state);
+//                if(state == ViewPager2.SCROLL_STATE_IDLE && !listenerScrollFlag){
+//                    // 别问为什么，反正你回头看这行代码肯定想不明白，不要改就行了
+//                    listenerScrollFlag = true;
+//                }
+//                if(state == ViewPager2.SCROLL_STATE_IDLE){
+//                    setCurrentSelect(curPageIndex);
+//                }
+//            }
+//        });
 
 
     }
 
     private void onScrolled(int from,int to,float offset){
-
+//        Log.e("MyDebug","test");
+        if(!listenerScrollFlag){
+            return;
+        }
 //        Log.e("MyDebug","from "+from+" ,to "+to+" ,offset"+offset);
 
         MainTabItem curItem = tabItems.get(from);

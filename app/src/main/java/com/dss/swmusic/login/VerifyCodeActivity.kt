@@ -11,8 +11,10 @@ import com.dss.swmusic.MainActivity
 import com.dss.swmusic.databinding.ActivityVerifyCodeBinding
 import com.dss.swmusic.network.LoginService
 import com.dss.swmusic.network.ServiceCreator
+import com.dss.swmusic.network.bean.LoginResult
 import com.dss.swmusic.network.bean.ResetPwResult
 import com.dss.swmusic.network.bean.SendVerifyCodeResult
+import com.dss.swmusic.util.UserBaseDataUtil
 import kotlinx.android.synthetic.main.activity_verify_code.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -94,13 +96,15 @@ class VerifyCodeActivity : BaseActivity() {
      * 重置密码的网络请求
      */
     private fun resetPassword(phone:String,password:String,captcha:String){
-        loginService.resetPassword(phone,password,captcha).enqueue(object : Callback<ResetPwResult> {
-            override fun onResponse(call: Call<ResetPwResult>, response: Response<ResetPwResult>) {
+        loginService.resetPassword(phone,password,captcha).enqueue(object : Callback<LoginResult> {
+            override fun onResponse(call: Call<LoginResult>, response: Response<LoginResult>) {
                 val result = response.body()
 
                 if(result?.code == 200){
                     // 重置密码成功
                     Toast.makeText(this@VerifyCodeActivity,"成功",Toast.LENGTH_LONG).show()
+                    // 保存登录数据
+                    UserBaseDataUtil.setUserBaseData(result)
                     // 跳转到主页面
                     val intent = Intent(this@VerifyCodeActivity, MainActivity::class.java)
                     startActivity(intent)
@@ -109,7 +113,7 @@ class VerifyCodeActivity : BaseActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ResetPwResult>, t: Throwable) {
+            override fun onFailure(call: Call<LoginResult>, t: Throwable) {
                 TODO("Not yet implemented")
             }
         })
