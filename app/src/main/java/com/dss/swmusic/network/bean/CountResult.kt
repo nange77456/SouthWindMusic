@@ -5,10 +5,6 @@ package com.dss.swmusic.network.bean
  */
 data class CountResult(
         /**
-         * 200 代表没问题
-         */
-        var code: Int,
-        /**
          * 用户创建的歌单的数量
          */
         var createdPlaylistCount:Int,
@@ -17,4 +13,4 @@ data class CountResult(
          */
         var subPlaylistCount: Int
 
-)
+):Result()

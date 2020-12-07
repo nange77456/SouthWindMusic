@@ -4,12 +4,8 @@ package com.dss.swmusic.network.bean
  * 获取歌单 的网络请求 的返回结果数据类
  */
 data class PlayListResult(
-        /**
-         * 200 代表没问题
-         */
-        var code: Int,
         var playlist: List<PlayList>
-)
+):Result()
 
 /**
  * 歌单数据

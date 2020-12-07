@@ -7,5 +7,4 @@ data class CheckPhoneResult(
         var exist: Int,
         var nickname: String,
         var hasPassword: Boolean,
-        var coed: Int
-)
+):Result()

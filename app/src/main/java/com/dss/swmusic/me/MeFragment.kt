@@ -15,6 +15,7 @@ import com.dss.swmusic.adapter.MeFunctionGroupAdapter
 import com.dss.swmusic.adapter.MePlayListAdapter
 import com.dss.swmusic.databinding.FragmentMeBinding
 import com.dss.swmusic.entity.MeFunctionItem
+import com.dss.swmusic.network.OkCallback
 import com.dss.swmusic.network.ServiceCreator
 import com.dss.swmusic.network.UserDataService
 import com.dss.swmusic.network.bean.CountResult
@@ -24,7 +25,6 @@ import com.dss.swmusic.network.bean.PlayListResult
 import com.dss.swmusic.util.UserBaseDataUtil
 import kotlinx.android.synthetic.main.fragment_me.*
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 
 class MeFragment : Fragment() {
@@ -55,7 +55,7 @@ class MeFragment : Fragment() {
     /**
      * 我喜欢的音乐 歌单
      */
-    private var likedPlayList :PlayList? = null
+    private var likedPlayList: PlayList? = null
 
     /**
      * 歌单的RecyclerView adapter
@@ -107,10 +107,10 @@ class MeFragment : Fragment() {
         initPlayList()
         // 初始化“我创建的歌单”的数据
         requestPlayListData {
-            Log.e("tag","size = ${collectPlayList.size}")
+            Log.e("tag", "size = ${collectPlayList.size}")
             mePlayListAdapter.setNewInstance(createdPlayList)
             // 初始化”我喜欢的音乐“歌单数据
-            likedPlayList?.let{
+            likedPlayList?.let {
                 Glide.with(this)
                         .load(it.coverImgUrl)
                         .into(likeImageView)
@@ -140,20 +140,10 @@ class MeFragment : Fragment() {
         // 设置昵称
         nickNameTextView.text = userBaseData.nickname ?: "无昵称"
         // 发送网络请求获取等级
-        userDataService.getLevelInfo(userBaseData.cookie).enqueue(object : Callback<LevelResult> {
-            override fun onResponse(call: Call<LevelResult>, response: Response<LevelResult>) {
-                val result = response.body()
-                if (result?.code == 200) {
-                    levelTextView.text = "Lv.${result.data.level}"
-                } else {
-                    TODO("网络错误")
-                }
+        userDataService.getLevelInfo(UserBaseDataUtil.getCookie()).enqueue(object : OkCallback<LevelResult>() {
+            override fun onSuccess(result: LevelResult) {
+                levelTextView.text = "Lv.${result.data.level}"
             }
-
-            override fun onFailure(call: Call<LevelResult>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
         })
     }
 
@@ -161,47 +151,30 @@ class MeFragment : Fragment() {
      * 获取歌单数据
      */
     private fun requestPlayListData(okCallback: () -> Unit) {
-        userDataService.getPlayListCount(userBaseData.cookie).enqueue(object : Callback<CountResult> {
-            override fun onResponse(call: Call<CountResult>, response: Response<CountResult>) {
-                val result = response.body()
-                if (result?.code == 200) {
-                    userDataService.getUserPlayListInfo(userBaseData.cookie, userBaseData.uid,
-                            result.createdPlaylistCount + result.subPlaylistCount)
-                            .enqueue(object : Callback<PlayListResult> {
-                                override fun onResponse(call: Call<PlayListResult>, response: Response<PlayListResult>) {
-                                    val playListResult = response.body()
-                                    Log.e("tag","created size = ${result.createdPlaylistCount}")
-                                    Log.e("tag","collect size = ${result.subPlaylistCount}")
-                                    Log.e("tag", "count = ${playListResult?.playlist?.size}")
-                                    if (playListResult?.code == 200) {
-                                        likedPlayList = playListResult.playlist[0]
-                                        for (i in 1 until result.createdPlaylistCount) {
-                                            createdPlayList.add(playListResult.playlist[i])
+        userDataService.getPlayListCount(UserBaseDataUtil.getCookie()).enqueue(object : OkCallback<CountResult>() {
+
+
+            override fun onSuccess(countResult: CountResult) {
+
+                userDataService.getUserPlayListInfo(UserBaseDataUtil.getCookie(), userBaseData.uid,
+                        countResult.createdPlaylistCount + countResult.subPlaylistCount)
+                        .enqueue(object : OkCallback<PlayListResult>() {
+
+                            override fun onSuccess(result: PlayListResult) {
+                                likedPlayList = result.playlist[0]
+                                for (i in 1 until countResult.createdPlaylistCount) {
+                                    createdPlayList.add(result.playlist[i])
 //                                            Log.e("tag","url = ${playListResult.playlist[i].coverImgUrl}")
-                                        }
-                                        for (i in result.createdPlaylistCount until (result.createdPlaylistCount
-                                                +result.subPlaylistCount)) {
-                                            collectPlayList.add(playListResult.playlist[i])
-                                        }
-                                    }
-                                    Log.e("tag","collect size = "+collectPlayList.size)
-                                    okCallback()
                                 }
-
-                                override fun onFailure(call: Call<PlayListResult>, t: Throwable) {
-                                    TODO("Not yet implemented")
+                                for (i in countResult.createdPlaylistCount until (countResult.createdPlaylistCount
+                                        + countResult.subPlaylistCount)) {
+                                    collectPlayList.add(result.playlist[i])
                                 }
+                                okCallback()
+                            }
+                        })
 
-                            })
-                } else {
-                    TODO("网络错误")
-                }
             }
-
-            override fun onFailure(call: Call<CountResult>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
         })
     }
 

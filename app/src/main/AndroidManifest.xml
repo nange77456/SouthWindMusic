@@ -6,35 +6,42 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".MyApplication"
         android:usesCleartextTraffic="true">
-        <activity android:name=".me.PlayActivity"></activity>
-        <activity android:name=".login.VerifyCodeActivity"
-            android:windowSoftInputMode="stateVisible"/>
-        <activity android:name=".login.SetPasswordActivity"
-            android:windowSoftInputMode="stateVisible"/>
-        <activity android:name=".login.PasswordActivity"
-            android:windowSoftInputMode="stateVisible"/>
-        <activity android:name=".me.LocalMusicActivity" />
-        <activity android:name=".login.LoginActivity"
-            android:windowSoftInputMode="stateVisible"/>
-        <activity
-            android:name=".login.EntryActivity"
-            android:theme="@style/EntryTheme">
-
-        </activity>
-        <activity android:name=".MainActivity"
-            android:theme="@style/TranslucentStatusTheme">
+        <activity android:name=".entity.StartActivity"
+            android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".me.PlayActivity" />
+        <activity
+            android:name=".login.VerifyCodeActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".login.SetPasswordActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".login.PasswordActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity android:name=".me.LocalMusicActivity" />
+        <activity
+            android:name=".login.LoginActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".login.EntryActivity"
+            android:theme="@style/EntryTheme"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/TranslucentStatusTheme">
         </activity>
     </application>
 

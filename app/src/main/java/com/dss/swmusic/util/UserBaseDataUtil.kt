@@ -8,13 +8,36 @@ import com.dss.swmusic.network.bean.LoginResult
 
 object UserBaseDataUtil {
 
-    @JvmStatic
     private var userBaseData : UserBaseData? = null
+
+    private var cookie: String? = null
 
     /**
      * 用户基本数据存储的文件名，存储方式为SharedPreference
      */
     private const val USER_BASE_DATA_FILE_NAME = "user_base_data"
+
+    /**
+     * 判断用户是否登录
+     */
+    @JvmStatic
+    fun isLogin():Boolean{
+        if(userBaseData == null){
+            getUserBaseData()
+        }
+        return cookie != null
+    }
+
+    /**
+     * 获取用户的cookie
+     */
+    @JvmStatic
+    fun getCookie():String{
+        if(userBaseData == null){
+            getUserBaseData()
+        }
+        return cookie!!
+    }
 
     /**
      * 获取用户基本数据
@@ -27,7 +50,7 @@ object UserBaseDataUtil {
         val sp = MyApplication.getContext()
                 .getSharedPreferences(USER_BASE_DATA_FILE_NAME, MODE_PRIVATE)
         val uid = sp.getLong("uid",0)
-        val cookie :String = sp.getString("cookie","不可能是null")!!
+        cookie  = sp.getString("cookie",null)
         userBaseData = UserBaseData(uid,cookie)
 
         userBaseData!!.nickname = sp.getString("nickname",null)

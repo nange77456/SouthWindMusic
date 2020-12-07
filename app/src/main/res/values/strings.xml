@@ -8,5 +8,6 @@
     <string name="menu_item_download_scan">扫描本地音乐</string>
     <string name="menu_item_download_sorting">选择排序方式</string>
     <string name="set_password_tip">请设置登录密码，8-20位字符，至少包含字母/数字/符号2种组合</string>
+    <string name="network_exception_tip">网络状态异常，请检查网络</string>
 
 </resources>

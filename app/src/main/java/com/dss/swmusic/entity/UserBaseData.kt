@@ -8,7 +8,7 @@ data class UserBaseData(
         /**
          * 用户登录的cookie数据
          */
-        var cookie: String
+        var cookie: String?
 ){
         var gender:Int = 0
         var nickname:String? = null
