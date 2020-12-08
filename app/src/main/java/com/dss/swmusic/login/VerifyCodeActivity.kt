@@ -3,6 +3,7 @@ package com.dss.swmusic.login
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.dss.swmusic.BaseActivity
 import com.dss.swmusic.MainActivity
@@ -86,13 +87,19 @@ class VerifyCodeActivity : BaseActivity() {
     private fun resetPassword(phone: String, password: String, captcha: String) {
         loginService.resetPassword(phone, password, captcha).enqueue(object : OkCallback<LoginResult>() {
             override fun onSuccess(result: LoginResult) {
-                // 重置密码成功
-                Toast.makeText(this@VerifyCodeActivity, "成功", Toast.LENGTH_LONG).show()
-                // 保存登录数据
-                UserBaseDataUtil.setUserBaseData(result)
-                // 跳转到主页面
-                val intent = Intent(this@VerifyCodeActivity, MainActivity::class.java)
-                startActivity(intent)
+                // 重设密码的网络请求不返回cookie，再调用一次登录（这不太合理，不过暂时先这样，下次一定改）
+               // 发送登录的网络请求
+                loginService.login(phone, password).enqueue(object : OkCallback<LoginResult>() {
+                    override fun onSuccess(result: LoginResult) {
+                        super.onSuccess(result)
+                        // 保存用户基本数据
+                        UserBaseDataUtil.setUserBaseData(result)
+                        // 跳转到主页面
+                        val intent = Intent(this@VerifyCodeActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    }
+
+                })
             }
 
             override fun onError(code: Int, response: Response<LoginResult>) {

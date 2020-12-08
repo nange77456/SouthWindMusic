@@ -1,6 +1,7 @@
 package com.dss.swmusic.util
 
 import android.content.Context.MODE_PRIVATE
+import android.util.Log
 import com.dss.swmusic.MyApplication
 import com.dss.swmusic.entity.UserBaseData
 import com.dss.swmusic.network.bean.LoginResult
@@ -35,6 +36,9 @@ object UserBaseDataUtil {
     fun getCookie():String{
         if(userBaseData == null){
             getUserBaseData()
+        }
+        if(cookie == null){
+            cookie = userBaseData!!.cookie
         }
         return cookie!!
     }
@@ -78,6 +82,7 @@ object UserBaseDataUtil {
      */
     @JvmStatic
     fun setUserBaseData(data:LoginResult){
+        Log.e("tag","setData cookie=${data.cookie}")
         userBaseData = UserBaseData(data.account.id,data.cookie)
         userBaseData!!.gender = data.profile.gender
         userBaseData!!.nickname = data.profile.nickname

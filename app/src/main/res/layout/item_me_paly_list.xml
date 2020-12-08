@@ -28,6 +28,7 @@
                 android:id="@+id/convertImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/play_list_default_cover" />
         </androidx.cardview.widget.CardView>
 
