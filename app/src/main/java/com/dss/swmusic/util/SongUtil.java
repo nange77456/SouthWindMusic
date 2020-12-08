@@ -1,9 +1,9 @@
 package com.dss.swmusic.util;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
 import android.media.MediaPlayer;
-import android.provider.MediaStore;
+import android.net.Uri;
+
+import com.dss.swmusic.MyApplication;
 
 import java.io.IOException;
 
@@ -12,20 +12,28 @@ import java.io.IOException;
  */
 public class SongUtil {
     /**
-     *
+     * 音乐播放器
      */
     public static MediaPlayer player = new MediaPlayer();
+    /**
+     * 是否首次播放过了
+     */
+    public static boolean isPrepared = false;
+    /**
+     * 是否点击了播放
+     */
+    public static boolean isPlaying = false;
 
     /**
-     * 播放音频的静态方法
-     * @param path 音频的地址
+     * 播放音频的静态方法（只有第一次播放需要）
+     * @param uri 音频的uri
      */
-    public static void play(String path){
+    public static void play( Uri uri){
         //重置音频文件，防止多次点击出错
         player.reset();
         //传入播放地址
         try {
-            player.setDataSource(path);
+            player.setDataSource(MyApplication.getContext(),uri);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,6 +46,10 @@ public class SongUtil {
                 player.start();
             }
         });
+
+        //改变两个boolean值
+        isPrepared = true;
+        isPlaying = true;
     }
 
 

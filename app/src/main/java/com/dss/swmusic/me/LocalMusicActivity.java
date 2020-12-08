@@ -120,6 +120,7 @@ public class LocalMusicActivity extends AppCompatActivity {
     /**
      * 扫描本地音乐
      */
+    //TODO 卸载安装第一次读不到本地音乐
     public void scanLocalMusic(){
         //获取内容提供器
         ContentResolver resolver = getContentResolver();
@@ -129,6 +130,7 @@ public class LocalMusicActivity extends AppCompatActivity {
                 ,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 
         while (cursor.moveToNext()){
+            //读取构造一首Song需要的数据
             String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
             String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
             String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
@@ -136,8 +138,12 @@ public class LocalMusicActivity extends AppCompatActivity {
             long size = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE));
             int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
             String parent = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_DISPLAY_NAME));
+            long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+            //把id转换为uri
+            String uriStr = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI+"/"+id;
 
-            LocalSong curr = new LocalSong(name,path,album,artist,size,duration,parent);
+            //构造Song
+            LocalSong curr = new LocalSong(name,path,album,artist,size,duration,parent,uriStr);
 
             /*//好像没有用
             if (size > 1000 * 800) {
@@ -148,6 +154,7 @@ public class LocalMusicActivity extends AppCompatActivity {
                     curr.setName(str[1].trim());
                 }
             }*/
+            //添加到songList结尾
             songList.add(curr);
         }
 

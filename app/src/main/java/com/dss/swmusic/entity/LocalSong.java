@@ -1,5 +1,6 @@
 package com.dss.swmusic.entity;
 
+import android.net.Uri;
 import java.io.Serializable;
 
 /**
@@ -19,9 +20,11 @@ public class LocalSong implements Serializable {
     /**时长*/
     private int duration;
     /**歌曲名的拼音，用于字母排序*/
-    private String pinyin;
+//    private String pinyin;
     /**父文件夹*/
     private String parent;
+    /**uri字符串*/
+    private String uriStr;
 
     /**
      *
@@ -32,8 +35,9 @@ public class LocalSong implements Serializable {
      * @param size 文件大小
      * @param duration 时长
      * @param parent 父文件夹
+     * @param uriStr uri字符串
      */
-    public LocalSong(String name, String path, String album, String artist, long size, int duration,String parent) {
+    public LocalSong(String name, String path, String album, String artist, long size, int duration,String parent,String uriStr) {
         this.name = name;
         this.path = path;
         this.album = album;
@@ -41,8 +45,8 @@ public class LocalSong implements Serializable {
         this.size = size;
         this.duration = duration;
         this.parent = parent;
-        //TODO
-//        this.pinyin = "";
+        this.uriStr = uriStr;
+
     }
 
     public LocalSong() {
@@ -96,13 +100,13 @@ public class LocalSong implements Serializable {
         this.duration = duration;
     }
 
-    public String getPinyin() {
-        return pinyin;
-    }
-
-    public void setPinyin(String pinyin) {
-        this.pinyin = pinyin;
-    }
+//    public String getPinyin() {
+//        return pinyin;
+//    }
+//
+//    public void setPinyin(String pinyin) {
+//        this.pinyin = pinyin;
+//    }
 
 
     public String getParent() {
@@ -113,4 +117,11 @@ public class LocalSong implements Serializable {
         this.parent = parent;
     }
 
+    public String getUriStr() {
+        return uriStr;
+    }
+
+    public void setUriStr(String uriStr) {
+        this.uriStr = uriStr;
+    }
 }

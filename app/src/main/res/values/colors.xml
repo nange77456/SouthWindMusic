@@ -6,7 +6,9 @@
 
     <color name="colorTheme">#f50057</color>
     <color name="colorIconMore">#A0A0A0</color>
-
+    
+<!--    分割线颜色-->
+    <color name="colorSplitter">#EEEEEE</color>
 
 <!--    忘记密码的文字颜色-->
     <color name="colorForgetPassword">#1E6EFF</color>
