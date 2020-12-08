@@ -105,11 +105,12 @@
 
         <!--        “我喜欢的音乐”-->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/likedPlayList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/me_item_background">
+            android:background="@drawable/ripple_grey">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView2"

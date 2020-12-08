@@ -144,26 +144,20 @@ class MeFragment : Fragment() {
         consecutiveScrollerLayout.setOnVerticalScrollChangeListener { v, scrollY, oldScrollY, scrollState ->
             barBackgroundView.alpha = (scrollY / 280.0).toFloat()
         }
-    }
 
-    /**
-     * 初始化“基本数据”的ui
-     */
-    private fun initProfileUI() {
-        // 设置头像
-        userBaseData.avatarUrl?.let {
-            Glide.with(this)
-                    .load(it)
-                    .into(profileImage)
+        // 设置我喜欢的音乐的点击事件
+        likedPlayList.setOnClickListener {
+            val intent = Intent(context,PlayListDetailActivity::class.java)
+            startActivity(intent)
         }
-        // 设置昵称
-        nickNameTextView.text = userBaseData.nickname ?: "无昵称"
-        // 发送网络请求获取等级
-        userDataService.getLevelInfo(UserBaseDataUtil.getCookie()).enqueue(object : OkCallback<LevelResult>() {
-            override fun onSuccess(result: LevelResult) {
-                levelTextView.text = "Lv.${result.data.level}"
-            }
-        })
+
+        // 设置歌单RecyclerView点击事件
+        createdPlayListAdapter.setOnItemClickListener{ _, _, position ->
+            Log.e("tag","click $position")
+        }
+        collectedPlayListAdapter.setOnItemClickListener { _, _, position ->
+            Log.e("tag","click $position")
+        }
     }
 
 

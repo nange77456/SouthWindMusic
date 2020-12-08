@@ -14,7 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".entity.StartActivity"
+        <activity android:name=".me.PlayListDetailActivity"
+            android:theme="@style/TranslucentStatusTheme"></activity>
+        <activity
+            android:name=".entity.StartActivity"
             android:theme="@style/StartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,11 +41,10 @@
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".login.EntryActivity"
-            android:theme="@style/EntryTheme"></activity>
+            android:theme="@style/EntryTheme" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/TranslucentStatusTheme">
-        </activity>
+            android:theme="@style/TranslucentStatusTheme"></activity>
     </application>
 
 </manifest>
