@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -14,7 +15,9 @@ import android.widget.RemoteViews;
 import androidx.core.app.NotificationCompat;
 
 import com.dss.swmusic.R;
+import com.dss.swmusic.entity.LocalSong;
 import com.dss.swmusic.me.PlayActivity;
+import com.dss.swmusic.util.SongUtil;
 
 public class MusicService extends Service {
     public static final int NOTIFICATION_ID = 1;
@@ -25,7 +28,24 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        //创建通知
+        createNotification();
 
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        LocalSong song = (LocalSong) intent.getSerializableExtra("clickedSong");
+        //播放
+        playService(song);
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * 创建通知的前台服务
+     */
+    private void createNotification(){
         //创建通知渠道，channel
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = null;
@@ -57,7 +77,7 @@ public class MusicService extends Service {
 
         //用上面的通知渠道和pendingIntent创建通知
         Notification notification = new NotificationCompat.Builder(this,"no_mean")
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_logo)
                 .setCustomBigContentView(notificationBigLayout)
                 .setCustomContentView(notificationSmallLayout)
                 .setContentIntent(pendingIntent)
@@ -66,8 +86,28 @@ public class MusicService extends Service {
 
         //启动前台服务
         startForeground(NOTIFICATION_ID,notification);
-//        Log.e("tag","启动了前台服务");
 
+    }
+
+    /**
+     * 播放功能放在服务里
+     * @param song 需要被播放的本地音乐
+     */
+    private void playService(LocalSong song){
+        if(!SongUtil.isPrepared){
+            //1. 首次播放
+            SongUtil.play(Uri.parse(song.getUriStr()));
+        }else {
+            if(!SongUtil.isPlaying){
+                //2. 暂停后的播放
+                SongUtil.player.start();
+                SongUtil.isPlaying = true;
+            }else {
+                //3. 暂停
+                SongUtil.player.pause();
+                SongUtil.isPlaying = false;
+            }
+        }
     }
 
     @Override

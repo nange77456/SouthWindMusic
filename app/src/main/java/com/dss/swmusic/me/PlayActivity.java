@@ -38,29 +38,12 @@ public class PlayActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
-                //播放
-                if(!SongUtil.isPrepared){
-                    //1. 首次播放
-                    SongUtil.play(Uri.parse(song.getUriStr()));
-
-                }else {
-                    if(!SongUtil.isPlaying){
-                        //2. 暂停后的播放
-                        SongUtil.player.start();
-                        SongUtil.isPlaying = true;
-                    }else {
-                        //3. 暂停
-                        SongUtil.player.pause();
-                        SongUtil.isPlaying = false;
-                    }
-                }
-                //启动动画
-                binding.rotatingRecord.startAnimation(SongUtil.isPlaying);
-
-
                 //启动前台服务
                 Intent notificationIntent = new Intent(PlayActivity.this, MusicService.class);
+                notificationIntent.putExtra("clickedSong",song);
                 startService(notificationIntent);
+                //启动动画
+                binding.rotatingRecord.startAnimation(SongUtil.isPlaying);
             }
 
 

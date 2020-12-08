@@ -126,7 +126,8 @@ public class LocalMusicActivity extends AppCompatActivity {
         ContentResolver resolver = getContentResolver();
         //访问音频文件数据库，获取游标，筛选‘audio/mpeg’类型的音频
         Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null
-                ,MediaStore.Audio.Media.MIME_TYPE+"='audio/mpeg'"
+//                ,MediaStore.Audio.Media.MIME_TYPE+"='audio/*'"
+                ,null
                 ,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 
         while (cursor.moveToNext()){
