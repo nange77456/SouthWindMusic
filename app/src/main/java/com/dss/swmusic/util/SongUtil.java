@@ -4,6 +4,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 
 import com.dss.swmusic.MyApplication;
+import com.dss.swmusic.entity.Song;
 
 import java.io.IOException;
 
@@ -23,6 +24,8 @@ public class SongUtil {
      * 是否点击了播放
      */
     public static boolean isPlaying = false;
+
+    public static Song song;
 
     /**
      * 播放音频的静态方法（只有第一次播放需要）

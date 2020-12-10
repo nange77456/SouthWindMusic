@@ -15,7 +15,7 @@ import android.widget.RemoteViews;
 import androidx.core.app.NotificationCompat;
 
 import com.dss.swmusic.R;
-import com.dss.swmusic.entity.LocalSong;
+import com.dss.swmusic.entity.Song;
 import com.dss.swmusic.me.PlayActivity;
 import com.dss.swmusic.util.SongUtil;
 
@@ -35,7 +35,8 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LocalSong song = (LocalSong) intent.getSerializableExtra("clickedSong");
+        Song song = (Song) intent.getSerializableExtra("clickedSong");
+        Log.e("tag","current song is "+song.getName());
         //播放
         playService(song);
 
@@ -93,10 +94,14 @@ public class MusicService extends Service {
      * 播放功能放在服务里
      * @param song 需要被播放的本地音乐
      */
-    private void playService(LocalSong song){
+    private void playService(Song song){
+        Log.e("tag","可能不是同一个song："+song.toString());
+        Log.e("tag","isPrepared: "+SongUtil.isPrepared);
         if(!SongUtil.isPrepared){
             //1. 首次播放
             SongUtil.play(Uri.parse(song.getUriStr()));
+            SongUtil.isPlaying = true;
+            SongUtil.isPrepared = true;
         }else {
             if(!SongUtil.isPlaying){
                 //2. 暂停后的播放

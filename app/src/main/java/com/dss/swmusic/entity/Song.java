@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * 一首曲子
  */
-public class LocalSong implements Serializable {
+public class Song implements Serializable {
     /**歌曲名*/
     private String name;
     /**路径*/
@@ -19,15 +19,21 @@ public class LocalSong implements Serializable {
     private long size;
     /**时长*/
     private int duration;
-    /**歌曲名的拼音，用于字母排序*/
-//    private String pinyin;
     /**父文件夹*/
     private String parent;
     /**uri字符串*/
     private String uriStr;
+    /**
+     * 歌曲类型：0表示本地，1表示网络
+     */
+    private boolean songType;
+    /**
+     * 歌曲封面图片url
+     */
+    private String coverImageUrl;
+
 
     /**
-     *
      * @param name 歌曲名
      * @param path 路径
      * @param album 专辑
@@ -37,7 +43,7 @@ public class LocalSong implements Serializable {
      * @param parent 父文件夹
      * @param uriStr uri字符串
      */
-    public LocalSong(String name, String path, String album, String artist, long size, int duration,String parent,String uriStr) {
+    public Song(String name, String path, String album, String artist, long size, int duration, String parent, String uriStr) {
         this.name = name;
         this.path = path;
         this.album = album;
@@ -49,7 +55,7 @@ public class LocalSong implements Serializable {
 
     }
 
-    public LocalSong() {
+    public Song() {
     }
 
     public String getName() {
@@ -100,15 +106,6 @@ public class LocalSong implements Serializable {
         this.duration = duration;
     }
 
-//    public String getPinyin() {
-//        return pinyin;
-//    }
-//
-//    public void setPinyin(String pinyin) {
-//        this.pinyin = pinyin;
-//    }
-
-
     public String getParent() {
         return parent;
     }
@@ -123,5 +120,21 @@ public class LocalSong implements Serializable {
 
     public void setUriStr(String uriStr) {
         this.uriStr = uriStr;
+    }
+
+    public boolean isSongType() {
+        return songType;
+    }
+
+    public void setSongType(boolean songType) {
+        this.songType = songType;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public void setCoverImageUrl(String coverImageUrl) {
+        this.coverImageUrl = coverImageUrl;
     }
 }

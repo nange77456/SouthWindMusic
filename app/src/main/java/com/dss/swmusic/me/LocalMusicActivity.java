@@ -22,7 +22,7 @@ import android.view.MenuItem;
 import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.LocalSongAdapter;
 import com.dss.swmusic.databinding.ActivityLocalMusicBinding;
-import com.dss.swmusic.entity.LocalSong;
+import com.dss.swmusic.entity.Song;
 import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class LocalMusicActivity extends AppCompatActivity {
     /**
      * 歌曲列表
      */
-    private List<LocalSong> songList = new ArrayList<>();
+    private List<Song> songList = new ArrayList<>();
 
     private LocalSongAdapter adapter = new LocalSongAdapter(songList);
 
@@ -60,9 +60,10 @@ public class LocalMusicActivity extends AppCompatActivity {
         adapter.setSongPositionPhone(new Phone1<Integer>() {
             @Override
             public void onPhone(Integer position) {
-                LocalSong song = songList.get(position);
+                Song song = songList.get(position);
                 Intent intent = new Intent(LocalMusicActivity.this,PlayActivity.class);
                 intent.putExtra("clickedSong",song);
+                Log.e("tag","最初的adpter里点击的song："+song.getName());
                 startActivity(intent);
             }
         });
@@ -126,8 +127,8 @@ public class LocalMusicActivity extends AppCompatActivity {
         ContentResolver resolver = getContentResolver();
         //访问音频文件数据库，获取游标，筛选‘audio/mpeg’类型的音频
         Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null
-//                ,MediaStore.Audio.Media.MIME_TYPE+"='audio/*'"
-                ,null
+                ,MediaStore.Audio.Media.MIME_TYPE+"='audio/mpeg'"
+//                ,null
                 ,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 
         while (cursor.moveToNext()){
@@ -144,7 +145,7 @@ public class LocalMusicActivity extends AppCompatActivity {
             String uriStr = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI+"/"+id;
 
             //构造Song
-            LocalSong curr = new LocalSong(name,path,album,artist,size,duration,parent,uriStr);
+            Song curr = new Song(name,path,album,artist,size,duration,parent,uriStr);
 
             /*//好像没有用
             if (size > 1000 * 800) {
