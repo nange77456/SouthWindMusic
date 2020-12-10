@@ -16,6 +16,10 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 使用support.v8.renderscript
+        renderscriptTargetApi 30
+        renderscriptSupportModeEnabled true
     }
 
     buildTypes {
@@ -51,6 +55,7 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4' // RecyclerViewAdapter 封装
     implementation 'com.github.bumptech.glide:glide:4.11.0'  // glide
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // glide
+    implementation 'com.github.pinguo-zhouwei:EasyBlur:v1.0.0' // 高斯模糊
 
     // Jetpack 组件
     def lifecycle_version = "2.2.0"

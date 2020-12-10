@@ -4,7 +4,7 @@ package com.dss.swmusic.network.bean
  * 获取歌单详情 返回的数据类
  */
 data class PlayListDetailResult(
-        var playList: PlayListDetail
+        var playlist: PlayListDetail
 ):Result(){
 
 }
@@ -14,7 +14,7 @@ data class PlayListDetail(
         /**
          * 歌曲的id都在这里面
          */
-        var tracks: List<TrackId>,
+        var trackIds: List<TrackId>,
         /**
          * 封面图
          */
@@ -31,6 +31,10 @@ data class PlayListDetail(
          * 歌单的id
          */
         var id: Long,
+        /**
+         * 歌单描述
+         */
+        var description: String
 
 )
 

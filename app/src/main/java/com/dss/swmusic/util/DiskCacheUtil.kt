@@ -58,7 +58,9 @@ object DiskCacheUtil {
         }else{
             val fr = FileReader(file)
             val br = BufferedReader(fr)
-            return br.readText()
+            val content = br.readText()
+            br.close()
+            return content
         }
     }
 

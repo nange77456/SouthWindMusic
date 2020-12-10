@@ -1,7 +1,7 @@
 package com.dss.swmusic.network.bean
 
 data class SongDetailResult(
-    var songs: List<Song>
+    var songs: MutableList<Song>
 ):Result()
 
 data class Song(
@@ -12,7 +12,7 @@ data class Song(
         /**
          * 歌手信息
          */
-        var ar: Ar,
+        var ar: List<Ar>,
         /**
          * 专辑信息
          */

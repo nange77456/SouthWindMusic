@@ -28,5 +28,12 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
+
+<!--    歌单详情页的主题-->
+    <style name="PlayListTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorTheme</item>
+        <item name="colorPrimaryDark">@color/colorTheme</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
     
 </resources>

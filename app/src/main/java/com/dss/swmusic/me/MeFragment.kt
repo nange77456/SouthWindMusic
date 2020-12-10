@@ -126,7 +126,7 @@ class MeFragment : Fragment() {
         // 设置“我创建的歌单"的ui
         viewModel.createdPlayList.observe(this){
             it?.let{
-                Log.e("tag",it.toString())
+//                Log.e("tag",it.toString())
                 createdPlayListAdapter.setDiffNewData(it)
             }
         }
@@ -147,16 +147,21 @@ class MeFragment : Fragment() {
 
         // 设置我喜欢的音乐的点击事件
         likedPlayList.setOnClickListener {
-            val intent = Intent(context,PlayListDetailActivity::class.java)
-            startActivity(intent)
+            activity?.let {
+                PlayListDetailActivity.start(it,viewModel.likedPlayList.value!!.id)
+            }
         }
 
         // 设置歌单RecyclerView点击事件
         createdPlayListAdapter.setOnItemClickListener{ _, _, position ->
-            Log.e("tag","click $position")
+            activity?.let {
+                PlayListDetailActivity.start(it,viewModel.createdPlayList.value!![position].id)
+            }
         }
         collectedPlayListAdapter.setOnItemClickListener { _, _, position ->
-            Log.e("tag","click $position")
+            activity?.let {
+                PlayListDetailActivity.start(it,viewModel.collectedPlayList.value!![position].id)
+            }
         }
     }
 

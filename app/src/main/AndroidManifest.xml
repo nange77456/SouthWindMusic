@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".me.PlayListDetailActivity"
-            android:theme="@style/TranslucentStatusTheme"></activity>
+            android:theme="@style/PlayListTheme"></activity>
         <activity
             android:name=".entity.StartActivity"
             android:theme="@style/StartTheme">
