@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.dss.swmusic.BaseActivity
 import com.dss.swmusic.databinding.ActivityLoginBinding
 import com.dss.swmusic.network.LoginService
+import com.dss.swmusic.network.OkCallback
 import com.dss.swmusic.network.ServiceCreator
 import com.dss.swmusic.network.bean.CheckPhoneResult
 import kotlinx.android.synthetic.main.activity_login.*
@@ -51,10 +52,11 @@ class LoginActivity : BaseActivity() {
             return
         }
         // 发送网络请求检查手机号是否注册过
-        loginService.checkPhoneExist(phoneNumber).enqueue(object : Callback<CheckPhoneResult> {
-            override fun onResponse(call: Call<CheckPhoneResult>, response: Response<CheckPhoneResult>) {
-                val checkPhoneResult = response.body()
-                if(checkPhoneResult?.exist == 1){
+        loginService.checkPhoneExist(phoneNumber).enqueue(object : OkCallback<CheckPhoneResult>() {
+
+            override fun onSuccess(result: CheckPhoneResult) {
+                super.onSuccess(result)
+                if(result.exist == 1){
                     // 手机号已注册过，跳转输入密码界面
                     PasswordActivity.start(this@LoginActivity,phoneNumber)
 
@@ -62,10 +64,6 @@ class LoginActivity : BaseActivity() {
                     // 手机号未注册过，跳转设置密码界面
                     SetPasswordActivity.start(this@LoginActivity,phoneNumber)
                 }
-            }
-
-            override fun onFailure(call: Call<CheckPhoneResult>, t: Throwable) {
-                TODO("Not yet implemented")
             }
 
         })

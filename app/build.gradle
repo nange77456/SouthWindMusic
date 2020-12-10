@@ -16,6 +16,10 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 使用support.v8.renderscript
+        renderscriptTargetApi 30
+        renderscriptSupportModeEnabled true
     }
 
     buildTypes {
@@ -48,6 +52,22 @@ dependencies {
     implementation 'com.github.cirno-poi:VerifyEditText:1.0.0' // 验证码输入框
     implementation 'com.github.donkingliang:ConsecutiveScroller:4.4.0' // 持续滑动布局
     implementation 'de.hdodenhof:circleimageview:3.1.0' // 圆形图片
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4' // RecyclerViewAdapter 封装
+    implementation 'com.github.bumptech.glide:glide:4.11.0'  // glide
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // glide
+    implementation 'com.github.pinguo-zhouwei:EasyBlur:v1.0.0' // 高斯模糊
+
+    // Jetpack 组件
+    def lifecycle_version = "2.2.0"
+    def arch_version = "2.1.0"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    // alternately - if using Java8, use the following instead of lifecycle-compiler
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.activity:activity-ktx:1.1.0"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

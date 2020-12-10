@@ -8,10 +8,32 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 
+<!--    启动页的主题-->
+    <style name="StartTheme" parent="EntryTheme">
+        <item name="android:windowBackground">@color/colorTheme</item>
+    </style>
+
+<!--    入口的主题-->
     <style name="EntryTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorTheme</item>
         <item name="colorPrimaryDark">@color/colorTheme</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+<!--    透明状态栏-->
+    <style name="TranslucentStatusTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="colorAccent">@color/colorTheme</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+<!--    歌单详情页的主题-->
+    <style name="PlayListTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorTheme</item>
+        <item name="colorPrimaryDark">@color/colorTheme</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+    
 </resources>

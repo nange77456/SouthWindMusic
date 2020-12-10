@@ -6,35 +6,46 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackgroundGray">
 
-    <com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout
+    <View
+        android:id="@+id/barBackgroundView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/mainTopBarHeight"
+        android:alpha="0"
+        android:background="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout
+        android:id="@+id/consecutiveScrollerLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/barBackgroundView">
 
+        <!--        头像、用户名-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="64dp"
+                android:layout_marginTop="16dp"
                 android:src="@drawable/profile"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/nickNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
+                android:layout_marginStart="16dp"
                 android:text="等待云间月"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
@@ -45,19 +56,19 @@
                 app:layout_constraintVertical_bias="0.32999998" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/levelTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/lv_background"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
-                android:text="Lv.6"
+                android:text="Lv.0"
                 android:textColor="@color/colorText"
                 android:textSize="12sp"
                 android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="@+id/profileImage"
-                app:layout_constraintStart_toStartOf="@+id/textView3"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                app:layout_constraintStart_toStartOf="@+id/nickNameTextView"
+                app:layout_constraintTop_toBottomOf="@+id/nickNameTextView" />
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -72,12 +83,131 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--        标签组-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/functionGroupRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/me_item_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--        “我喜欢的音乐”-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/likedPlayList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/ripple_corner">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/colorMeHeartBackground"
+                app:cardBackgroundColor="@color/colorMeHeartBackground"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/likeImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/cardView2"
+                app:layout_constraintStart_toEndOf="@+id/cardView2"
+                app:layout_constraintTop_toTopOf="@+id/cardView2">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="我喜欢的音乐"
+                    android:textColor="@color/colorText" />
+
+                <TextView
+                    android:id="@+id/likeMusicNum"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="0首" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--        “创建歌单”、“收藏歌单”标签-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/createdPlayListTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:text="创建歌单"
+                android:textColor="@color/colorText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/collectPlayListTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="39dp"
+                android:text="收藏歌单"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/createdPlayListTextView"
+                app:layout_constraintStart_toEndOf="@+id/createdPlayListTextView"
+                app:layout_constraintTop_toTopOf="@+id/createdPlayListTextView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--        “创建歌单”、“收藏歌单” 内容-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playListRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/me_item_background"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+             />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="20dp" />
+
     </com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

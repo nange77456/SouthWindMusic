@@ -19,19 +19,25 @@
             android:name=".service.MusicService"
             android:enabled="true"
             android:exported="true"></service>
+        <activity android:name=".me.PlayListDetailActivity"
+            android:theme="@style/PlayListTheme"></activity>
+        <activity
+            android:name=".entity.StartActivity"
+            android:theme="@style/StartTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <activity
-            android:name=".me.PlayActivity"
-            android:launchMode="singleInstance" />
-        <activity
-            android:name=".login.VerifyCodeActivity"
-            android:windowSoftInputMode="stateVisible" />
-        <activity
-            android:name=".login.SetPasswordActivity"
-            android:windowSoftInputMode="stateVisible" />
-        <activity
-            android:name=".login.PasswordActivity"
-            android:windowSoftInputMode="stateVisible" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".me.PlayActivity"
+            android:launchMode="singleInstance" ></activity>
+        <activity android:name=".login.VerifyCodeActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".login.SetPasswordActivity"
+            android:windowSoftInputMode="stateVisible"/>
+        <activity android:name=".login.PasswordActivity"
+            android:windowSoftInputMode="stateVisible"/>
         <activity android:name=".me.LocalMusicActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,22 +45,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".login.LoginActivity"
-            android:windowSoftInputMode="stateVisible" />
+        <activity android:name=".login.LoginActivity"
+            android:windowSoftInputMode="stateVisible"/>
+
         <activity
             android:name=".login.EntryActivity"
-            android:theme="@style/EntryTheme">
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
-        </activity>
-        <activity android:name=".MainActivity"></activity>
+            android:theme="@style/EntryTheme" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/TranslucentStatusTheme"></activity>
     </application>
 
 </manifest>

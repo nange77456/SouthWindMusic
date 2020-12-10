@@ -21,4 +21,10 @@
 <!--    页面背景灰色-->
     <color name="colorBackgroundGray">#F8F8F8</color>
 
+<!--    首页“喜欢的音乐”的红心的背景色-->
+    <color name="colorMeHeartBackground">#FCE7E6</color>
+
+<!--    点击波纹的颜色-->
+    <color name="colorRipple">#A0A0A0</color>
+
 </resources>

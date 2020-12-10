@@ -7,4 +7,8 @@
     
 <!--    页边距-->
     <dimen name="pageMargin">20dp</dimen>
+
+<!--    首页顶部的bar的高度-->
+    <dimen name="mainTopBarHeight">75dp</dimen>
+
 </resources>
