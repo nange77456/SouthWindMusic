@@ -35,10 +35,10 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Song song = (Song) intent.getSerializableExtra("clickedSong");
-        Log.e("tag","current song is "+song.getName());
+//        Song song = (Song) intent.getParcelableExtra("clickedSong");
+        Log.e("tag","current song is "+SongUtil.song.getName());
         //播放
-        playService(song);
+        playService(SongUtil.song);
 
         return super.onStartCommand(intent, flags, startId);
     }

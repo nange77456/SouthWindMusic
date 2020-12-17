@@ -7,9 +7,11 @@ import com.dss.swmusic.MyApplication;
 import com.dss.swmusic.entity.Song;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * 单首歌曲操作的工具类
+ * 注：更新当前歌曲的时候要改isPrepared
  */
 public class SongUtil {
     /**
@@ -24,8 +26,12 @@ public class SongUtil {
      * 是否点击了播放
      */
     public static boolean isPlaying = false;
-
+    /**
+     * 当前播放的歌曲
+     */
     public static Song song;
+
+    public static List<Song> songList;
 
     /**
      * 播放音频的静态方法（只有第一次播放需要）
