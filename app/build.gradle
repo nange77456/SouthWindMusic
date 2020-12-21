@@ -17,6 +17,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        multiDexEnabled true
+
         // 使用support.v8.renderscript
         renderscriptTargetApi 30
         renderscriptSupportModeEnabled true
@@ -46,16 +48,27 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
+    implementation 'com.android.support:multidex:1.0.3'
+
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
 
     implementation 'com.github.cirno-poi:VerifyEditText:1.0.0' // 验证码输入框
     implementation 'com.github.donkingliang:ConsecutiveScroller:4.4.0' // 持续滑动布局
     implementation 'de.hdodenhof:circleimageview:3.1.0' // 圆形图片
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4' // RecyclerViewAdapter 封装
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6' // RecyclerViewAdapter 封装
     implementation 'com.github.bumptech.glide:glide:4.11.0'  // glide
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0' // glide
     implementation 'com.github.pinguo-zhouwei:EasyBlur:v1.0.0' // 高斯模糊
+    implementation 'com.github.zhpanvip:BannerViewPager:3.3.0' // 轮播图
+    // 下拉加载，上拉刷新
+    // -----------------------------
+    implementation  'com.scwang.smart:refresh-layout-kernel:2.0.1'      //核心必须依赖
+    implementation  'com.scwang.smart:refresh-header-classics:2.0.1'    //经典刷新头
+    implementation  'com.scwang.smart:refresh-footer-classics:2.0.1'    //经典加载
+    implementation  'com.scwang.smart:refresh-header-material:2.0.1'    //谷歌刷新头
+    // -----------------------------
+    implementation 'com.shuyu:GSYVideoPlayer:8.0.0' // 视频播放框架
 
     // Jetpack 组件
     def lifecycle_version = "2.2.0"

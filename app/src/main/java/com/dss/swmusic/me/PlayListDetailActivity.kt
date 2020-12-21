@@ -2,8 +2,7 @@ package com.dss.swmusic.me
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Matrix
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -13,11 +12,17 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.dss.swmusic.adapter.PlayListAdapter
+import com.dss.swmusic.adapter.diff.SongDiffCallback
 import com.dss.swmusic.databinding.ActivityPlayListDetailBinding
+import com.dss.swmusic.discover.DailyRecommendActivity
 import com.dss.swmusic.me.viewmodel.PlayListDetailViewModel
 import com.dss.swmusic.me.viewmodel.PlayListDetailViewModelFactory
+import com.dss.swmusic.util.height
+import com.dss.swmusic.util.width
 import com.zhouwei.blurlibrary.EasyBlur
 import kotlinx.android.synthetic.main.activity_play_list_detail.*
+import kotlinx.android.synthetic.main.activity_play_list_detail.barBackgroundView
+import kotlinx.android.synthetic.main.fragment_me.*
 
 class PlayListDetailActivity : AppCompatActivity() {
 
@@ -32,10 +37,13 @@ class PlayListDetailActivity : AppCompatActivity() {
         binding = ActivityPlayListDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // 获取歌单的id，从上一个Activity传来
         val playListId = intent.getLongExtra(KEY, 0)
 
+        // 初始化ViewModel
         viewModel = PlayListDetailViewModelFactory(playListId).create(PlayListDetailViewModel::class.java)
 
+        // 设置顶部bar的渐变动画
         bar.viewTreeObserver.addOnGlobalLayoutListener {
             consecutiveLayout.stickyOffset = bar.height
             showView.viewTreeObserver.addOnGlobalLayoutListener {
@@ -45,62 +53,89 @@ class PlayListDetailActivity : AppCompatActivity() {
             }
 
         }
-
+        // 初始化RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter.setDiffCallback(SongDiffCallback())
         recyclerView.adapter = adapter
 
+        // 监听歌单基本数据变化
         viewModel.playListDetail.observe(this){
-            if(it == null){
-                return@observe
-            }
-//            Glide.with(this)
-//                    .load(it.coverImgUrl)
-//                    .into(playListCoverImg)
+            // 设置歌单名
             playListName.text = it.name
+            // 设置歌单创建者的头像
             Glide.with(this)
                     .load(it.creator.avatarUrl)
                     .into(createrAvatarImg)
+            // 设置歌单创建者的名字
             createrName.text = it.creator.nickname
+            // 设置歌单描述
             playListDesc.text = it.description
             // 设置背景图
-            Glide.with(this)
-                    .asBitmap()
-                    .load(it.coverImgUrl)
-                    .into(object : CustomTarget<Bitmap>(){
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            Glide.with(this@PlayListDetailActivity)
-                                    .load(resource)
-                                    .into(playListCoverImg)
-                            val bitmaps = convert(resource,showView.width,barBackgroundView.height,showView.height,playAllBackgroundImg.height)
-                            Glide.with(this@PlayListDetailActivity)
-                                    .load(bitmaps[0])
-                                    .into(barBackgroundView)
-                            Glide.with(this@PlayListDetailActivity)
-                                    .load(bitmaps[1])
-                                    .into(showViewBackgroundImg)
-                            Glide.with(this@PlayListDetailActivity)
-                                    .load(bitmaps[2])
-                                    .into(playAllBackgroundImg)
-                            Log.e("tag","bitmap 1 width = ${bitmaps[0].width}")
-                            Log.e("tag","bitmap 3 width = ${bitmaps[2].width},${bitmaps[2].height}")
-                            Log.e("tag","image view width = ${playAllBackgroundImg.width},${playAllBackgroundImg.height}")
-                        }
+            showView.width{ showViewWidth->
+                barBackgroundView.height { barBackgroundViewHeight->
+                    playAllBackgroundImg.height { playAllBackgroundImgHeight->
+                        Glide.with(this)
+                                .asBitmap()
+                                .load(it.coverImgUrl)
+                                .into(object : CustomTarget<Bitmap>() {
+                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                        Glide.with(this@PlayListDetailActivity)
+                                                .load(resource)
+                                                .into(playListCoverImg)
+                                        val bitmaps = convert(resource, showView.width,
+                                                barBackgroundView.height, showView.height,
+                                                playAllBackgroundImg.height)
+                                        Glide.with(this@PlayListDetailActivity)
+                                                .load(bitmaps[0])
+                                                .into(barBackgroundView)
+                                        Glide.with(this@PlayListDetailActivity)
+                                                .load(bitmaps[1])
+                                                .into(showViewBackgroundImg)
+                                        Glide.with(this@PlayListDetailActivity)
+                                                .load(bitmaps[2])
+                                                .into(playAllBackgroundImg)
+//                                        barBackgroundView.colorFilter = PorterDuffColorFilter(
+//                                                Color.rgb(123,123,123),
+//                                                PorterDuff.Mode.MULTIPLY
+//                                        )
+//                                        showViewBackgroundImg.colorFilter = PorterDuffColorFilter(
+//                                                Color.rgb(123,123,123),
+//                                                PorterDuff.Mode.MULTIPLY
+//                                        )
+//                                        playAllBackgroundImg.colorFilter = PorterDuffColorFilter(
+//                                                Color.rgb(123,123,123),
+//                                                PorterDuff.Mode.MULTIPLY
+//                                        )
+                                    }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-//                            TODO("Not yet implemented")
-                        }
+                                    override fun onLoadCleared(placeholder: Drawable?) {}
 
-                    })
+                                })
+                    }
+                }
+            }
+
+
+
+
         }
 
+        // 监听歌曲数据变化
         viewModel.songs.observe(this){
-            adapter.setNewInstance(it)
+            adapter.setDiffNewData(it)
             playListNumText.text = "（共${it.size}首）"
         }
 
+        // 设置RecyclerView 点击事件
+        adapter.setOnItemClickListener { _, _, position ->
+            // TODO 点击歌曲
+        }
 
     }
 
+    /**
+     * 把歌单图转换为 3 张图片
+     */
     private fun convert(source: Bitmap, screenWidth: Int,
                         barHeight: Int, showHeight: Int, bottomHeight: Int): Array<Bitmap> {
         val blurBitmap: Bitmap = EasyBlur.with(this)
@@ -118,6 +153,8 @@ class PlayListDetailActivity : AppCompatActivity() {
         } else {
             screenWidth.toFloat() / width
         }
+//        Log.e("tag","screenWidth=${screenWidth},newHeight=${newHeight}")
+//        Log.e("tag","width = ${width},height=${height},scale = ${scale}")
         val matrix = Matrix()
         matrix.postScale(scale, scale)
         val scaleBitmap = Bitmap.createBitmap(blurBitmap, 0, 0, width, height, matrix, false)
