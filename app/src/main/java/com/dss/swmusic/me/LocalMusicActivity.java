@@ -23,6 +23,7 @@ import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.LocalSongAdapter;
 import com.dss.swmusic.databinding.ActivityLocalMusicBinding;
 import com.dss.swmusic.entity.Song;
+import com.dss.swmusic.util.SongUtil;
 import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class LocalMusicActivity extends AppCompatActivity {
     /**
      * 歌曲列表
      */
-    private List<Song> songList = new ArrayList<>();
+    private ArrayList<Song> songList = new ArrayList<>();
 
     private LocalSongAdapter adapter = new LocalSongAdapter(songList);
 
@@ -62,8 +63,11 @@ public class LocalMusicActivity extends AppCompatActivity {
             public void onPhone(Integer position) {
                 Song song = songList.get(position);
                 Intent intent = new Intent(LocalMusicActivity.this,PlayActivity.class);
-                intent.putExtra("clickedSong",song);
-                Log.e("tag","最初的adpter里点击的song："+song.getName());
+
+                SongUtil.song = song;
+                SongUtil.isPrepared = false;
+                SongUtil.songList = songList;
+
                 startActivity(intent);
             }
         });
@@ -159,6 +163,7 @@ public class LocalMusicActivity extends AppCompatActivity {
             //添加到songList结尾
             songList.add(curr);
         }
+        adapter.notifyDataSetChanged();
 
         cursor.close();
 

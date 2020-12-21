@@ -1,13 +1,16 @@
 package com.dss.swmusic.adapter;
 
+import android.animation.ValueAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.dss.swmusic.R;
 import com.dss.swmusic.entity.Song;
 
@@ -23,6 +26,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
      * 本地音乐列表
      */
     List<Song> songList;
+    /**
+     * 唱片动画——值动画
+     */
+    private ValueAnimator recordAnimator = ValueAnimator.ofFloat(0,360);
 
     public RecordAdapter(List<Song> songList) {
         this.songList = songList;
@@ -38,6 +45,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
             record = itemView.findViewById(R.id.record);
             cover = itemView.findViewById(R.id.cover);
             view = itemView;
+
+
         }
     }
 
@@ -47,7 +56,22 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_record,parent,false);
         ViewHolder holder = new ViewHolder(view);
 
-        return null;
+        //设置唱片的动画
+//        recordAnimator = ;
+        recordAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Float value = (Float) animation.getAnimatedValue();
+                holder.record.setRotation(value);
+                holder.cover.setRotation(value);
+            }
+        });
+        recordAnimator.setDuration(15000);
+        recordAnimator.setRepeatMode(ValueAnimator.RESTART);
+        recordAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        recordAnimator.setInterpolator(new LinearInterpolator());
+
+        return holder;
     }
 
     @Override
@@ -55,8 +79,12 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         Song song = songList.get(position);
         String coverImgUrl = song.getCoverImageUrl();
         if(coverImgUrl!=null){
-
+            Glide.with(holder.cover)
+                    .load(coverImgUrl)
+                    .into(holder.cover);
         }
+
+
 
     }
 
@@ -65,6 +93,22 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
         return songList.size();
     }
 
+
+    /**
+     * 启动唱片的动画（旋转）
+     * @param flag
+     */
+    public void startRecordAnimation(boolean flag){
+        if(flag){
+            if(!recordAnimator.isStarted()){
+                recordAnimator.start();
+            }else{
+                recordAnimator.resume();
+            }
+        }else{
+            recordAnimator.pause();
+        }
+    }
 
 
 

@@ -23,9 +23,27 @@
         app:subtitle="歌手"
         app:title="歌曲名" />
 
+    <com.dss.swmusic.custom.view.LyricView
+        android:id="@+id/lyricView"
+        android:layout_width="0dp"
+        android:layout_height="600dp"
+        android:background="#FFEBEE"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <com.dss.swmusic.custom.view.ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lyricView"
+        tools:layout_editor_absoluteX="-26dp" />
+
     <com.dss.swmusic.custom.view.RotatingRecord
         android:id="@+id/rotatingRecord"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
