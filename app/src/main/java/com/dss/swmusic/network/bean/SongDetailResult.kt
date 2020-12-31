@@ -1,5 +1,7 @@
 package com.dss.swmusic.network.bean
 
+import android.os.Parcelable
+
 data class SongDetailResult(
     var songs: MutableList<Song>
 ):Result()

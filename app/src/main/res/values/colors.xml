@@ -7,24 +7,28 @@
     <color name="colorTheme">#f50057</color>
     <color name="colorIconMore">#A0A0A0</color>
 
-<!--    分割线颜色-->
+    <!--    分割线颜色-->
     <color name="colorSplitter">#EEEEEE</color>
 
-<!--    忘记密码的文字颜色-->
+    <!--    忘记密码的文字颜色-->
     <color name="colorForgetPassword">#1E6EFF</color>
 
-<!--    浅色的文字-->
+    <!--    浅色的文字-->
     <color name="colorTextLight">#A0A0A0</color>
-<!--正常颜色的文字-->
+    <!--正常颜色的文字-->
     <color name="colorText">#000000</color>
 
-<!--    页面背景灰色-->
+    <!--    页面背景灰色-->
     <color name="colorBackgroundGray">#F8F8F8</color>
 
-<!--    首页“喜欢的音乐”的红心的背景色-->
+    <!--    首页“喜欢的音乐”的红心的背景色-->
     <color name="colorMeHeartBackground">#FCE7E6</color>
 
-<!--    点击波纹的颜色-->
+    <!--    点击波纹的颜色-->
     <color name="colorRipple">#A0A0A0</color>
+
+    <!--    banner 的指示器的两个颜色-->
+    <color name="bannerIndicatorNormalColor">#ffffff</color>
+    <color name="bannerIndicatorCheckedColor">@color/colorTheme</color>
 
 </resources>

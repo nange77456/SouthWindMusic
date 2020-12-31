@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    音乐列表子项的尺寸，大标题、小标题、三个点-->
+    <!--    音乐列表子项的尺寸，大标题、小标题、三个点-->
     <dimen name="iconSize">20dp</dimen>
     <dimen name="TextTitle">15sp</dimen>
     <dimen name="TextSubtitle">12sp</dimen>
-    
-<!--    页边距-->
+
+    <!--    页边距-->
     <dimen name="pageMargin">20dp</dimen>
 
-<!--    首页顶部的bar的高度-->
+    <!--    首页顶部的bar的高度-->
     <dimen name="mainTopBarHeight">75dp</dimen>
+
+    <dimen name="dp_1">1dp</dimen>
+    <dimen name="dp_100">100dp</dimen>
+    <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_4_5">4.5dp</dimen>
 
 </resources>

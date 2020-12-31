@@ -50,6 +50,11 @@ public class MainTabLayout extends LinearLayout {
      */
     private boolean listenerScrollFlag = true;
 
+    /**
+     * 点击同一项的监听
+     */
+    private OnClickCurItemListener onClickCurItemListener = null;
+
     // 什么用？写了也看不懂
     private int temp = 0;
 
@@ -93,6 +98,9 @@ public class MainTabLayout extends LinearLayout {
         item.setOnClickListener(v->{
             if(viewPager != null){
                 int choose = tabItems.indexOf(item);
+                if(choose == viewPager.getCurrentItem() && onClickCurItemListener != null){
+                    onClickCurItemListener.clickCurItem(choose);
+                }
                 viewPager.setCurrentItem(choose);
                 listenerScrollFlag = false;
                 setCurrentSelect(choose);
@@ -153,10 +161,10 @@ public class MainTabLayout extends LinearLayout {
                     if(positionOffset < (1-positionOffset)){
                         // 向右滑
                         next = curPageIndex+1;
-                        Log.e("MeDebug","向右滑,next="+next);
+//                        Log.e("MeDebug","向右滑,next="+next);
                     }else{
                         next = curPageIndex -1;
-                        Log.e("MeDebug","向左滑,next="+next);
+//                        Log.e("MeDebug","向左滑,next="+next);
                     }
                     scrollFlag = true;
                 }
@@ -259,7 +267,15 @@ public class MainTabLayout extends LinearLayout {
 
     }
 
-    private void onScrolled(int from,int to,float offset){
+    /**
+     * 设置点击当前项的监听
+     * @param onClickCurItemListener
+     */
+    public void setOnClickCurItemListener(OnClickCurItemListener onClickCurItemListener) {
+        this.onClickCurItemListener = onClickCurItemListener;
+    }
+
+    private void onScrolled(int from, int to, float offset){
 //        Log.e("MyDebug","test");
         if(!listenerScrollFlag){
             return;
@@ -284,6 +300,8 @@ public class MainTabLayout extends LinearLayout {
 
     }
 
-
+    public interface OnClickCurItemListener{
+        void clickCurItem(int index);
+    }
 
 }
