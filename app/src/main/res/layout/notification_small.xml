@@ -29,17 +29,22 @@
             <TextView
                 android:id="@+id/song"
                 style="@style/TextAppearance.Compat.Notification.Title"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="TextView"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/artist"
                 style="@style/TextAppearance.Compat.Notification"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="TextView"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <ImageView
@@ -47,13 +52,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_play" />
+            android:background="@drawable/ripple"
+            app:srcCompat="@drawable/ic_stop" />
 
         <ImageView
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/ripple"
             app:srcCompat="@drawable/ic_next" />
 
         <TextView

@@ -2,6 +2,8 @@ package com.dss.swmusic;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 /**
@@ -12,6 +14,7 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+        System.out.println(new Random().nextInt(2));
+//        assertEquals(4, 2 + 2);
     }
 }

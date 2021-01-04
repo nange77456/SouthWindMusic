@@ -57,9 +57,11 @@ class MeViewModel: ViewModel() {
         }
         meCache.getCreatedPlayList {
             createdPlayList.value = it
+//            collectedPlayList.value = it
         }
         meCache.getCollectedPlayList {
             collectedPlayList.value = it
+//            createdPlayList.value = it
         }
         // 发送网络请求获取数据
         requestPlayListData()

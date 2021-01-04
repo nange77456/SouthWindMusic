@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".me.HomePageActivity">
+
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatarImgView"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/nameTextView"
+        app:layout_constraintStart_toStartOf="@+id/nameTextView" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="等待云间月"
+        app:layout_constraintBottom_toTopOf="@+id/lvTextView"
+        app:layout_constraintStart_toStartOf="@+id/lvTextView" />
+
+    <TextView
+        android:id="@+id/lvTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/lv_background_home_page"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Lv.6"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundImageView"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,7 @@ import com.dss.swmusic.network.bean.Song
 
 class SongDiffCallback: DiffUtil.ItemCallback<Song>(){
     override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean {
-        return true
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean {

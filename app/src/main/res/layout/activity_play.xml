@@ -4,18 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#6200EA"
     tools:context=".me.PlayActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="62dp"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:contentInsetStartWithNavigation="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/rotatingRecord"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,9 +25,22 @@
     <com.dss.swmusic.custom.view.LyricView
         android:id="@+id/lyricView"
         android:layout_width="0dp"
-        android:layout_height="600dp"
+        android:layout_height="0dp"
         android:background="#FFEBEE"
         android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+    </com.dss.swmusic.custom.view.LyricView>
+
+    <com.dss.swmusic.custom.view.RotatingRecord
+        android:id="@+id/rotatingRecord"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
@@ -37,28 +49,43 @@
         android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lyricView"
-        tools:layout_editor_absoluteX="-26dp" />
-
-    <com.dss.swmusic.custom.view.RotatingRecord
-        android:id="@+id/rotatingRecord"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/button"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="81dp"
-        android:text="播放/暂停"
-        android:textColor="@color/colorText"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rotatingRecord" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/lastSong"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            app:srcCompat="@drawable/ic_last_song" />
+
+        <com.dss.swmusic.custom.view.PlayButton
+            android:id="@+id/playButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/nextSong"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            app:srcCompat="@drawable/ic_next_song" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

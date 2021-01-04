@@ -10,10 +10,13 @@
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+    </androidx.viewpager.widget.ViewPager>
 
     <com.dss.swmusic.custom.view.MainTabLayout
         android:id="@+id/mainTabLayout"
@@ -22,6 +25,7 @@
         android:layout_marginStart="64dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="64dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -42,5 +46,17 @@
             android:layout_height="match_parent"
             android:text="视频" />
     </com.dss.swmusic.custom.view.MainTabLayout>
+
+    <ImageView
+        android:id="@+id/searchIcon"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ic_search"
+        android:onClick="onClickSearchIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/mainTabLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_search"
+        app:tint="@android:color/black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

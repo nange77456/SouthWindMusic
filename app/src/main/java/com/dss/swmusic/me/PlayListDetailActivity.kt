@@ -11,20 +11,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.dss.swmusic.BaseActivity
 import com.dss.swmusic.adapter.PlayListAdapter
 import com.dss.swmusic.adapter.diff.SongDiffCallback
 import com.dss.swmusic.databinding.ActivityPlayListDetailBinding
 import com.dss.swmusic.discover.DailyRecommendActivity
 import com.dss.swmusic.me.viewmodel.PlayListDetailViewModel
 import com.dss.swmusic.me.viewmodel.PlayListDetailViewModelFactory
-import com.dss.swmusic.util.height
-import com.dss.swmusic.util.width
+import com.dss.swmusic.util.*
 import com.zhouwei.blurlibrary.EasyBlur
 import kotlinx.android.synthetic.main.activity_play_list_detail.*
 import kotlinx.android.synthetic.main.activity_play_list_detail.barBackgroundView
 import kotlinx.android.synthetic.main.fragment_me.*
 
-class PlayListDetailActivity : AppCompatActivity() {
+class PlayListDetailActivity : BaseActivity() {
 
     private lateinit var binding:ActivityPlayListDetailBinding
 
@@ -32,10 +32,20 @@ class PlayListDetailActivity : AppCompatActivity() {
 
     private val adapter = PlayListAdapter()
 
+    /**
+     * 是否已传入播放歌单
+     */
+    private var flag = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayListDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 设置返回按钮
+        icon_cancel.setOnClickListener {
+            finish()
+        }
 
         // 获取歌单的id，从上一个Activity传来
         val playListId = intent.getLongExtra(KEY, 0)
@@ -128,7 +138,14 @@ class PlayListDetailActivity : AppCompatActivity() {
 
         // 设置RecyclerView 点击事件
         adapter.setOnItemClickListener { _, _, position ->
-            // TODO 点击歌曲
+            val songList = viewModel.songs.value!!
+            val song = songList[position]
+            if(!flag){
+                SongPlayer.play(song.toPlayerSong(),songList.toPlayerSongList())
+                flag = true
+            }else{
+                SongPlayer.play(song.toPlayerSong())
+            }
         }
 
     }

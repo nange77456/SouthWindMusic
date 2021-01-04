@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.dss.swmusic.BaseActivity;
 import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.LocalSongAdapter;
 import com.dss.swmusic.databinding.ActivityLocalMusicBinding;
@@ -29,7 +30,7 @@ import com.dss.swmusic.util.phone.Phone1;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalMusicActivity extends AppCompatActivity {
+public class LocalMusicActivity extends BaseActivity {
     /**
      * 布局
      */

@@ -15,8 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".discover.DailyRecommendActivity"
-            android:theme="@style/PlayListTheme"></activity>
+        <activity android:name=".me.SearchResultActivity"></activity>
+        <activity
+            android:name=".me.SearchActivity"
+            android:windowSoftInputMode="stateVisible" />
+        <activity android:name=".me.HomePageActivity" />
+        <activity
+            android:name=".discover.DailyRecommendActivity"
+            android:theme="@style/PlayListTheme" />
 
         <service
             android:name=".service.MusicService"
@@ -30,15 +36,14 @@
         <activity
             android:name=".entity.StartActivity"
             android:theme="@style/StartTheme">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".me.PlayActivity"
-            android:launchMode="singleInstance" />
+            android:name=".me.PlayActivity" />
         <activity
             android:name=".login.VerifyCodeActivity"
             android:windowSoftInputMode="stateVisible" />
@@ -49,11 +54,13 @@
             android:name=".login.PasswordActivity"
             android:windowSoftInputMode="stateVisible" />
         <activity android:name=".me.LocalMusicActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".login.LoginActivity"
