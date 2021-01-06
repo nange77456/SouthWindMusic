@@ -16,15 +16,20 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.RecordAdapter;
+import com.dss.swmusic.entity.PlayerSong;
 import com.dss.swmusic.entity.Song;
+import com.dss.swmusic.util.SongPlayer;
 import com.dss.swmusic.util.phone.Phone;
 import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -34,45 +39,36 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * 自定义view，组合控件
  */
 public class RotatingRecord extends FrameLayout {
-    /**
-     * 针压动画——视图动画
-     */
-    private RotateAnimation pinAnimation1;
-    /**
-     * 针压动画——视图动画
-     */
-    private RotateAnimation pinAnimation2;
+
+    private static final String TAG = "RotatingRecord";
+
+
     /**
      * 针压图片视图
      */
     private ImageView pin;
+
     /**
      * 唱片视图
      */
-    private ViewPager2 recordPager;
-    /**
-     * 歌曲列表，给图片数据
-     * !!要new，不然adapter第一次拿到null会报错
-     */
-    private List<Song> songList = new ArrayList<>();
-    /**
-     * 唱片viewPager2的adapter
-     */
-    private RecordAdapter adapter = new RecordAdapter(songList);
-    /**
-     * 通知外部类recordPager滑动到第几页
-     */
-    public Phone1<Integer> currentSongPhone;
-
+    private GoonViewPager<RecordView> recordPager;
 
     /**
-     * 使用RotatingRecord必须初始化歌曲列表
-     * @param songList
+     * 唱片GoonViewPager的adapter
      */
-    public void setSongList(List<Song> songList) {
-        this.songList.addAll(songList);
-        adapter.notifyDataSetChanged();
-    }
+    private GoonViewPager.Adapter<RecordView> adapter;
+
+
+
+    private OnPageChangeListener onPageChangeListener;
+
+    /**
+     * 针压动画的时长
+     */
+    private final long pinDuration = 400;
+
+    private boolean isPinDown;
+
 
     public RotatingRecord(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -80,88 +76,187 @@ public class RotatingRecord extends FrameLayout {
                 .inflate(R.layout.custom_view_rotating_record,this);
         pin = view.findViewById(R.id.pin);
         recordPager = view.findViewById(R.id.recordPager);
-        //唱片视图设置adapter
-        recordPager.setAdapter(adapter);
-        //设置滑动唱片切换正在播放的歌曲
-        recordPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
 
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                //通知这个自定义view的使用者 滑动到第position页了
-                if(currentSongPhone!=null){
-                    currentSongPhone.onPhone(position);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-                switch (state){
-                    case ViewPager2.SCROLL_STATE_DRAGGING:
-                        //TODO 歌曲继续播放，针压采用恢复动画
-                        break;
-                    case ViewPager2.SCROLL_STATE_IDLE:
-
-                        break;
-                    case ViewPager2.SCROLL_STATE_SETTLING:
-
-                        break;
-                }
-
-            }
-        });
-        //设置点击唱片切换到歌词页
-        recordPager.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         //让针压起始装态是远离唱片的
         pin.setPivotX(dp2px(context,18));
         pin.setPivotY(dp2px(context,16));
         pin.setRotation(-20);
 
-        //设置针压动画1
-        pinAnimation1 = new RotateAnimation(0,20,dp2px(context,18),dp2px(context,16));
-        pinAnimation1.setDuration(500);
-        pinAnimation1.setFillAfter(true);
-        //设置针压动画2
-        pinAnimation2 = new RotateAnimation(20,0,dp2px(context,18),dp2px(context,16));
-        pinAnimation2.setDuration(500);
-        pinAnimation2.setFillAfter(true);
+
 
 
     }
 
-    /**
-     * 让viewPager划到指定页
-     * @param index
-     */
-    public void setCurrentPage(int index){
-        recordPager.setCurrentItem(index,false);
-    }
 
     /**
-     * 启动唱片和针压的动画
-     * @param flag
+     * 此初始化函数必须被调用
+     * @param lastSong 上一首歌
+     * @param curSong 当前播放歌曲
+     * @param nextSong 下一首歌
+     * @param isPlaying 是否正在播放
      */
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void startAnimation(boolean flag){
-        if(flag){
-            pin.startAnimation(pinAnimation1);
-        }else{
-            pin.startAnimation(pinAnimation2);
+    public void init(PlayerSong lastSong,PlayerSong curSong,PlayerSong nextSong
+            ,boolean isPlaying,GetSongInterface getSongInterface){
+        adapter = new GoonViewPager.Adapter<RecordView>() {
+
+            @Override
+            public RecordView createView() {
+                return new RecordView(getContext());
+            }
+
+            @Override
+            public void initData(List<RecordView> viewList) {
+                RecordView view1 = viewList.get(0);
+                RecordView view2 = viewList.get(1);
+                RecordView view3 = viewList.get(2);
+                view1.setImage(lastSong.getAlbums().getPicUrl());
+                view2.setImage(curSong.getAlbums().getPicUrl());
+                view3.setImage(nextSong.getAlbums().getPicUrl());
+            }
+
+            @Override
+            public void setNextData(RecordView view) {
+                PlayerSong song = getSongInterface.getNextSong();
+                view.setImage(song.getAlbums().getPicUrl());
+            }
+
+            @Override
+            public void setLastData(RecordView view) {
+                PlayerSong song = getSongInterface.getLastSong();
+                view.setImage(song.getAlbums().getPicUrl());
+            }
+        };
+        recordPager.setAdapter(adapter);
+
+        recordPager.setOnScrollListener(new GoonViewPager.OnScrollListener() {
+            @Override
+            public void startScroll() {
+                if(isPinDown){
+                    setPinUp(true);
+                }
+                recordPager.getCurView().stopAnimation();
+            }
+
+            @Override
+            public void endScroll(int oldPosition,int newPosition) {
+                setPinDown(true);
+                recordPager.getCurView().startAnimation();
+                recordPager.getLastView().resetAnimation();
+                recordPager.getNextView().resetAnimation();
+
+                if(onPageChangeListener != null){
+                    if(newPosition > oldPosition){
+                        onPageChangeListener.onToNextPage();
+                    }else if(newPosition < oldPosition){
+                        onPageChangeListener.onToLastPage();
+                    }
+                }
+
+            }
+        });
+
+        // 如果正在播放
+        if(isPlaying){
+            setPinDown(false);
+            recordPager.getCurView().startAnimation();
         }
-        adapter.startRecordAnimation(flag);
 
+
+    }
+
+
+    public void setOnPageChangeListener(OnPageChangeListener pageChangeListener){
+        this.onPageChangeListener = pageChangeListener;
+    }
+
+
+    // 给外部调用的生命周期函数
+    public void onPlay(){
+        Log.e(TAG, "onPlay" );
+        setPinDown(true);
+        recordPager.getCurView().startAnimation();
+    }
+
+    public void onStop(){
+        Log.e(TAG, "onStop" );
+        setPinUp(true);
+        recordPager.getCurView().stopAnimation();
+    }
+
+    public void onNext(){
+        recordPager.scrollToNext();
+    }
+
+    public void onLast(){
+        recordPager.scrollToLast();
+    }
+
+
+
+    /**
+     * 开始播放的ui
+     * @param hasAnimation
+     */
+    private void setPlayUi(boolean hasAnimation){
+        setPinDown(hasAnimation);
+//        adapter.startRecordAnimation(recordPager.getCurrentItem());
+//        adapter.resumeRecordAnimation(recordPager.getCurrentItem());
+    }
+
+    /**
+     * 停止播放的ui
+     * @param hasAnimation
+     */
+    private void setStopUi(boolean hasAnimation){
+        setPinUp(hasAnimation);
+//        adapter.stopRecordAnimation();
+    }
+
+    /**
+     * 针压下来
+     * @param hasAnimation 是否有动画
+     */
+    private void setPinDown(boolean hasAnimation){
+        RotateAnimation animation = new RotateAnimation(0,20,dp2px(getContext(),18)
+                ,dp2px(getContext(),16));
+        animation.setFillAfter(true);
+        if(hasAnimation){
+            animation.setDuration(pinDuration);
+        }else{
+            animation.setDuration(0);
+        }
+        pin.startAnimation(animation);
+        isPinDown = true;
+    }
+
+    /**
+     * 针抬起来
+     * @param hasAnimation 是否有动画
+     */
+    private void setPinUp(boolean hasAnimation){
+        RotateAnimation animation = new RotateAnimation(20,0,dp2px(getContext(),18)
+                ,dp2px(getContext(),16));
+        animation.setFillAfter(true);
+        if(hasAnimation){
+            animation.setDuration(pinDuration);
+        }else{
+            animation.setDuration(0);
+        }
+        pin.startAnimation(animation);
+        isPinDown = false;
+    }
+
+    public interface GetSongInterface{
+        PlayerSong getNextSong();
+
+        PlayerSong getLastSong();
+    }
+
+    public interface OnPageChangeListener{
+        void onToNextPage();
+
+        void onToLastPage();
     }
 
     /**
@@ -170,7 +265,7 @@ public class RotatingRecord extends FrameLayout {
      * @param pxValue
      * @return
      */
-    private static int px2dp(Context context, float pxValue) {
+    private int px2dp(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
@@ -181,7 +276,7 @@ public class RotatingRecord extends FrameLayout {
      * @param dpValue
      * @return
      */
-    private static int dp2px(Context context, float dpValue){
+    private int dp2px(Context context, float dpValue){
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int)(dpValue*scale+0.5f);
     }

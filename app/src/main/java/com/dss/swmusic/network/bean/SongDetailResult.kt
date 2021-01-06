@@ -1,16 +1,24 @@
 package com.dss.swmusic.network.bean
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
 data class SongDetailResult(
     var songs: MutableList<Song>
 ):Result()
 
 data class Song(
+
+        var id:Long,
         /**
          * 歌曲名
          */
         var name:String,
+        /**
+         * 歌曲长度，单位为毫秒
+         */
+        @SerializedName("dt")
+        var duration: Int,
         /**
          * 歌手信息
          */

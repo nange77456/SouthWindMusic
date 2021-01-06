@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.dss.swmusic.BaseActivity
 import com.dss.swmusic.adapter.PlayListAdapter
 import com.dss.swmusic.adapter.diff.SongDiffCallback
 import com.dss.swmusic.databinding.ActivityPlayListDetailBinding
@@ -29,7 +30,7 @@ import kotlinx.android.synthetic.main.activity_play_list_detail.*
 /**
  * 每日推荐歌曲
  */
-class DailyRecommendActivity : AppCompatActivity() {
+class DailyRecommendActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPlayListDetailBinding
 

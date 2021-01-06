@@ -6,8 +6,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,24 +41,46 @@ public class LyricView extends FrameLayout {
         lyricRecycler.setAdapter(adapter);
         lyricRecycler.setLayoutManager(new LinearLayoutManager(context));
 
+
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                View headerView = new View(context);
-                headerView.setLayoutParams(new LayoutParams(lyricRecycler.getWidth(),getHeight()/2));
-                headerView.setBackgroundColor(Color.BLUE);
-                Log.e("tag","height = "+getHeight()/2);
-                View footerView = new View(context);
-                footerView.setLayoutParams(new LayoutParams(lyricRecycler.getWidth(),getHeight()/2));
+//                ViewGroup headerContainer = new RelativeLayout(context);
+//                View headerView = new View(context);
+//                headerView.setLayoutParams(new ViewGroup.LayoutParams(lyricRecycler.getWidth(),600));
+//                headerView.setBackgroundColor(Color.BLUE);
+//                headerContainer.addView(headerView);
+//                Log.e("tag","height = "+getHeight()/2);
+//                Log.e("tag","height2 = "+view.getHeight());
+//                View footerView = new View(context);
+//                footerView.setLayoutParams(new LayoutParams(lyricRecycler.getWidth(),getHeight()/2));
 
-                adapter.addHeaderView(headerView);
-                adapter.addFooterView(footerView);
+                Log.e("tag","runnnnnnnnnnnnnnnn");
+
+
+
+//                adapter.addHeaderView(headerView);
+//                Log.e("tag","headerLayout height = "+adapter.getHeaderLayout().getHeight());
+//                adapter.addFooterView(footerView);
             }
         });
 
 
 
 
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+//        Log.e("tag","hhhhhhhhhhhhhhhhhh");
+        View headerView = new View(getContext());
+        headerView.setLayoutParams(new ViewGroup.LayoutParams(getWidth(),getHeight()/2));
+//        headerView.setBackgroundColor(Color.GREEN);
+        adapter.addHeaderView(headerView);
+        View footerView = new View(getContext());
+        footerView.setLayoutParams(new ViewGroup.LayoutParams(getWidth(),getHeight()/2));
+        adapter.addFooterView(footerView);
     }
 
     public void setLyrics(List<Lyric> lyrics) {

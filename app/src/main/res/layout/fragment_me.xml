@@ -197,17 +197,15 @@
             android:id="@+id/playListRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/me_item_background"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-             />
+            android:background="@drawable/me_item_background" />
 
         <Space
             android:layout_width="0dp"
             android:layout_height="20dp" />
 
     </com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

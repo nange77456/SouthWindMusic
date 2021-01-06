@@ -170,7 +170,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
 
 
     </com.donkingliang.consecutivescroller.ConsecutiveScrollerLayout>
@@ -194,7 +194,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/icon_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -214,9 +214,9 @@
             android:text="歌单"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-            app:layout_constraintStart_toEndOf="@+id/imageView4"
-            app:layout_constraintTop_toTopOf="@+id/imageView4" />
+            app:layout_constraintBottom_toBottomOf="@+id/icon_cancel"
+            app:layout_constraintStart_toEndOf="@+id/icon_cancel"
+            app:layout_constraintTop_toTopOf="@+id/icon_cancel" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--    持续滑动布局-->
