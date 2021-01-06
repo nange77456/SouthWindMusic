@@ -69,6 +69,10 @@ public class RotatingRecord extends FrameLayout {
 
     private boolean isPinDown;
 
+    private boolean isScrollProgram = false;
+
+    private boolean isPlaying;
+
 
     public RotatingRecord(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -77,14 +81,10 @@ public class RotatingRecord extends FrameLayout {
         pin = view.findViewById(R.id.pin);
         recordPager = view.findViewById(R.id.recordPager);
 
-
         //让针压起始装态是远离唱片的
         pin.setPivotX(dp2px(context,18));
         pin.setPivotY(dp2px(context,16));
         pin.setRotation(-20);
-
-
-
 
     }
 
@@ -98,6 +98,7 @@ public class RotatingRecord extends FrameLayout {
      */
     public void init(PlayerSong lastSong,PlayerSong curSong,PlayerSong nextSong
             ,boolean isPlaying,GetSongInterface getSongInterface){
+        this.isPlaying = isPlaying;
         adapter = new GoonViewPager.Adapter<RecordView>() {
 
             @Override
@@ -140,18 +141,26 @@ public class RotatingRecord extends FrameLayout {
 
             @Override
             public void endScroll(int oldPosition,int newPosition) {
-                setPinDown(true);
-                recordPager.getCurView().startAnimation();
-                recordPager.getLastView().resetAnimation();
-                recordPager.getNextView().resetAnimation();
+                Log.e(TAG, "endScroll: ");
+                if(oldPosition == newPosition && RotatingRecord.this.isPlaying){
+                    setPinDown(true);
+                    recordPager.getCurView().startAnimation();
+                }else if(oldPosition != newPosition){
+                    setPinDown(true);
+                    recordPager.getCurView().startAnimation();
+                    recordPager.getLastView().resetAnimation();
+                    recordPager.getNextView().resetAnimation();
+                }
 
-                if(onPageChangeListener != null){
+
+                if(onPageChangeListener != null && !isScrollProgram){
                     if(newPosition > oldPosition){
                         onPageChangeListener.onToNextPage();
                     }else if(newPosition < oldPosition){
                         onPageChangeListener.onToLastPage();
                     }
                 }
+                isScrollProgram = false;
 
             }
         });
@@ -174,21 +183,26 @@ public class RotatingRecord extends FrameLayout {
     // 给外部调用的生命周期函数
     public void onPlay(){
         Log.e(TAG, "onPlay" );
+        isPlaying = true;
         setPinDown(true);
         recordPager.getCurView().startAnimation();
     }
 
     public void onStop(){
+        isPlaying = false;
         Log.e(TAG, "onStop" );
         setPinUp(true);
         recordPager.getCurView().stopAnimation();
     }
 
     public void onNext(){
+        Log.e(TAG, "onNext: " );
+        isScrollProgram = true;
         recordPager.scrollToNext();
     }
 
     public void onLast(){
+        isScrollProgram = true;
         recordPager.scrollToLast();
     }
 

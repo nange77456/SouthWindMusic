@@ -164,6 +164,7 @@ public class MusicService extends Service {
         NotificationChannel channel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             channel = new NotificationChannel("no_mean","前台通知服务", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setSound(null,null);  // 关闭通知声音
             notificationManager.createNotificationChannel(channel);
         }
 
@@ -193,6 +194,7 @@ public class MusicService extends Service {
         notificationBuilder = new NotificationCompat.Builder(this,"no_mean");
         notification = notificationBuilder
                 .setSmallIcon(R.drawable.ic_logo)
+                .setSound(null)
                 .setCustomBigContentView(notificationBigLayout)
                 .setCustomContentView(notificationSmallLayout)
                 .setContentIntent(pendingIntent)

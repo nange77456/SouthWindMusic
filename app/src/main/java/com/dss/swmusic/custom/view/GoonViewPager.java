@@ -296,12 +296,14 @@ public class GoonViewPager<T extends View> extends ViewGroup {
         T firstView = viewList.removeFirst();
         viewList.addLast(firstView);
 
-        adapter.setNextData(firstView);
-        firstView.layout((targetPosition+1)*getWidth(),0,(targetPosition+2)*getWidth(),getHeight());
-
         if(onScrollListener != null){
             onScrollListener.endScroll(curPosition,targetPosition);
         }
+
+        adapter.setNextData(firstView);
+        firstView.layout((targetPosition+1)*getWidth(),0,(targetPosition+2)*getWidth(),getHeight());
+
+
     }
 
     private void onToLastCompletion() {
@@ -310,12 +312,14 @@ public class GoonViewPager<T extends View> extends ViewGroup {
         T lastView = viewList.removeLast();
         viewList.addFirst(lastView);
 
-        adapter.setLastData(lastView);
-        lastView.layout((targetPosition-1)*getWidth(),0,targetPosition*getWidth(),getHeight());
-
         if(onScrollListener != null){
             onScrollListener.endScroll(curPosition,targetPosition);
         }
+
+        adapter.setLastData(lastView);
+        lastView.layout((targetPosition-1)*getWidth(),0,targetPosition*getWidth(),getHeight());
+
+
     }
 
     interface OnScrollListener{

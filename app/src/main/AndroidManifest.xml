@@ -43,7 +43,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".me.PlayActivity" />
+            android:name=".me.PlayActivity"
+            android:theme = "@style/PlayListTheme"/>
         <activity
             android:name=".login.VerifyCodeActivity"
             android:windowSoftInputMode="stateVisible" />

@@ -1,5 +1,6 @@
 package com.dss.swmusic.util
 
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import com.dss.swmusic.entity.Artist
@@ -29,7 +30,7 @@ fun <T : View> T.width(function: (Int) -> Unit) {
 fun List<Artist>.toNiceString():String{
     var result = ""
     for(ar in this){
-        result += "ar.name/"
+        result += "${ar.name}/"
     }
-    return result.substring(result.length-1)
+    return result.substring(0,result.length-1)
 }

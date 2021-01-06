@@ -29,11 +29,11 @@ public class ProgressBar extends View {
     /**
      * 进度条颜色-左
      */
-    private int firstColor = Color.parseColor("#AAA9A7");
+    private int firstColor = Color.parseColor("#ffffff");
     /**
      * 进度条颜色-右
      */
-    private int secondColor = Color.parseColor("#878684");
+    private int secondColor = Color.parseColor("#66ffffff");
     /**
      * 指示进度的小圆点的颜色
      */
@@ -46,11 +46,15 @@ public class ProgressBar extends View {
     /**
      * 指示进度的小圆点的大半径
      */
-    private float bigRadius = 30;
+    private float bigRadius = 20;
     /**
      * 指示进度的小圆点的变化的半径
      */
     private float radius = smallRadius;
+
+    private float padding = 10;
+
+    private OnRateChangeListener onRateChangeListener;
 
     public ProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -63,11 +67,11 @@ public class ProgressBar extends View {
         paint.setStrokeWidth(5);
 
         paint.setColor(firstColor);
-        canvas.drawLine(0,getHeight()/2,getWidth()*rate,getHeight()/2,paint);
+        canvas.drawLine(padding,getHeight()/2,getWidth()*rate,getHeight()/2,paint);
         paint.setColor(secondColor);
-        canvas.drawLine(getWidth()*rate,getHeight()/2,getWidth(),getHeight()/2,paint);
+        canvas.drawLine(padding+getWidth()*rate,getHeight()/2,getWidth()-padding,getHeight()/2,paint);
         paint.setColor(thirdColor);
-        canvas.drawCircle(getWidth()*rate,getHeight()/2,radius,paint);
+        canvas.drawCircle((getWidth()-padding*2)*rate+padding,getHeight()/2,radius,paint);
 
     }
 
@@ -76,7 +80,9 @@ public class ProgressBar extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_UP:
                 Log.e("tag","UP");
-
+                if(onRateChangeListener != null){
+                    onRateChangeListener.onRateChange( rate);
+                }
                 stopAnimation();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -130,8 +136,24 @@ public class ProgressBar extends View {
     }
 
 
+    public void setRate(float rate){
+        this.rate = rate;
+        invalidate();
+    }
+
+    public float getRate(){return rate;}
+
+    public void setOnRateChangeListener(OnRateChangeListener onRateChangeListener) {
+        this.onRateChangeListener = onRateChangeListener;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
+
+    public static interface OnRateChangeListener{
+        void onRateChange(float rate);
+    }
+
 }

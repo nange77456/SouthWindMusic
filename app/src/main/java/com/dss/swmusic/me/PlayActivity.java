@@ -1,16 +1,27 @@
 package com.dss.swmusic.me;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.bumptech.glide.request.transition.Transition;
 import com.dss.swmusic.BaseActivity;
 import com.dss.swmusic.adapter.LyricAdapter;
+import com.dss.swmusic.custom.view.ProgressBar;
 import com.dss.swmusic.custom.view.RotatingRecord;
 import com.dss.swmusic.databinding.ActivityPlayBinding;
 import com.dss.swmusic.entity.PlayerSong;
@@ -20,8 +31,11 @@ import com.dss.swmusic.util.ExtensionKt;
 import com.dss.swmusic.util.SongPlayer;
 import com.dss.swmusic.util.SongUtil;
 import com.dss.swmusic.util.phone.Phone1;
+import com.zhouwei.blurlibrary.EasyBlur;
 
 import java.util.ArrayList;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * 唱片播放页
@@ -31,6 +45,13 @@ public class PlayActivity extends BaseActivity {
      * 布局
      */
     private ActivityPlayBinding binding;
+
+    private final String TAG = "PlayActivity";
+
+    private boolean scrollFlag = false;
+
+    private DrawableCrossFadeFactory factory =
+            new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
     /**
      * 播放监听
@@ -47,6 +68,11 @@ public class PlayActivity extends BaseActivity {
         }
 
         @Override
+        public void onPlaying(int mesc) {
+            setProgressBar(mesc);
+        }
+
+        @Override
         public void onStop() {
             binding.rotatingRecord.onStop();
             binding.playButton.showPlay();
@@ -54,16 +80,28 @@ public class PlayActivity extends BaseActivity {
 
         @Override
         public void onNext() {
-//            Log.e("tag","onNext");
+            setToolbar();
+            setBackground();
+
+            if(scrollFlag){
+                scrollFlag = false;
+                return;
+            }
+            Log.e("tag","onNext");
             binding.rotatingRecord.onNext();
-//            binding.rotatingRecord.addNext(SongPlayer.getNextSong());
         }
 
         @Override
         public void onLast() {
-//            Log.e("tag","onLast");
+            setToolbar();
+            setBackground();
+
+            if(scrollFlag){
+                scrollFlag = false;
+                return;
+            }
+            Log.e("tag","onLast");
             binding.rotatingRecord.onLast();
-//            binding.rotatingRecord.addLast(SongPlayer.getLastSong());
         }
 
     };
@@ -76,13 +114,16 @@ public class PlayActivity extends BaseActivity {
         binding = ActivityPlayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // 设置返回按钮的点击事件
+        binding.returnBtn.setOnClickListener(v -> finish());
         //设置这一页的toolbar标题
+        setToolbar();
+        // 设置背景图
+        setBackground();
 //        binding.toolbar.setTitle(SongUtil.song.getName());
 //        binding.toolbar.setSubtitle(SongUtil.song.getArtist());
 
 //        binding.lyricView.setLyrics("[00:04.050]\n[00:12.570]难以忘记初次见你\n[00:16.860]一双迷人的眼睛\n[00:21.460]在我脑海里\n[00:23.960]你的身影 挥散不去\n[00:30.160]握你的双手感觉你的温柔\n[00:34.940]真的有点透不过气\n[00:39.680]你的天真 我想珍惜\n[00:43.880]看到你受委屈 我会伤心\n[00:48.180]喔\n[00:50.340]只怕我自己会爱上你\n[00:55.070]不敢让自己靠的太近\n[00:59.550]怕我没什么能够给你\n[01:04.030]爱你也需要很大的勇气\n[01:08.190]只怕我自己会爱上你\n[01:12.910]也许有天会情不自禁\n[01:17.380]想念只让自己苦了自己\n[01:21.840]爱上你是我情非得已\n[01:28.810]难以忘记初次见你\n[01:33.170]一双迷人的眼睛\n[01:37.700]在我脑海里 你的身影 挥散不去\n[01:46.360]握你的双手感觉你的温柔\n[01:51.120]真的有点透不过气\n[01:55.910]你的天真 我想珍惜\n[02:00.150]看到你受委屈 我会伤心\n[02:04.490]喔\n[02:06.540]只怕我自己会爱上你\n[02:11.240]不敢让自己靠的太近\n[02:15.750]怕我没什么能够给你\n[02:20.200]爱你也需要很大的勇气\n[02:24.570]只怕我自己会爱上你\n[02:29.230]也许有天会情不自禁\n[02:33.680]想念只让自己苦了自己\n[02:38.140]爱上你是我情非得已\n[03:04.060]什么原因 耶\n[03:07.730]我竟然又会遇见你\n[03:13.020]我真的真的不愿意\n[03:16.630]就这样陷入爱的陷阱\n[03:20.700]喔\n[03:22.910]只怕我自己会爱上你\n[03:27.570]不敢让自己靠的太近\n[03:32.040]怕我没什么能够给你\n[03:36.560]爱你也需要很大的勇气\n[03:40.740]只怕我自己会爱上你\n[03:45.460]也许有天会情不自禁\n[03:49.990]想念只让自己苦了自己\n[03:54.510]爱上你是我情非得已\n[03:58.970]爱上你是我情非得已\n[04:03.000]\n");
-        binding.toolbar.setTitle(SongPlayer.getCurSong().getName());
-        binding.toolbar.setSubtitle(ExtensionKt.toNiceString(SongPlayer.getCurSong().getArtists()));
 
         binding.rotatingRecord.init(SongPlayer.getLastSong(),
                 SongPlayer.getCurSong(),
@@ -103,11 +144,13 @@ public class PlayActivity extends BaseActivity {
         binding.rotatingRecord.setOnPageChangeListener(new RotatingRecord.OnPageChangeListener() {
             @Override
             public void onToNextPage() {
+                scrollFlag = true;
                 SongPlayer.playNext();
             }
 
             @Override
             public void onToLastPage() {
+                scrollFlag = true;
                 SongPlayer.playLast();
             }
         });
@@ -121,7 +164,6 @@ public class PlayActivity extends BaseActivity {
 
         //播放按钮点击事件
         binding.playButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 if (SongPlayer.isPlaying()) {
@@ -134,11 +176,12 @@ public class PlayActivity extends BaseActivity {
 
         });
 
+        // 下一首 按钮的点击事件
         binding.nextSong.setOnClickListener((v) -> {
-            Log.e("tag", "click next song");
             SongPlayer.playNext();
         });
 
+        // 上一首按钮的点击事件
         binding.lastSong.setOnClickListener((v) -> {
             SongPlayer.playLast();
         });
@@ -146,9 +189,92 @@ public class PlayActivity extends BaseActivity {
         // 播放监听
         SongPlayer.addOnPlayListener(onPlayListener);
 
+        // progressBar 的改变监听
+        binding.progressBar.setOnRateChangeListener(rate -> {
+
+            int curTime = (int) (SongPlayer.getDuration()*rate);
+            SongPlayer.seekTo(curTime);
+            setProgressBar(curTime);
+        });
 
     }
 
+    /**
+     * 设置标题
+     */
+    private void setToolbar(){
+        PlayerSong song = SongPlayer.getCurSong();
+        binding.title.setText(song.getName());
+        binding.subtitle.setText(ExtensionKt.toNiceString(song.getArtists()));
+    }
+
+    /**
+     * 设置背景图
+     */
+    private void setBackground(){
+        String url = SongPlayer.getCurSong().getAlbums().getPicUrl();
+        Glide.with(this)
+                .asBitmap()
+                .load(url)
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        Bitmap background = EasyBlur.with(PlayActivity.this)
+                                .bitmap(resource)
+                                .radius(25)
+                                .scale(8)
+                                .blur();
+                        background = EasyBlur.with(PlayActivity.this)
+                                .bitmap(background)
+                                .radius(10)
+                                .scale(4)
+                                .blur();
+                        Glide.with(binding.backgroundImg)
+                                .load(background)
+                                .transition(withCrossFade(factory))
+                                .into(binding.backgroundImg);
+                        binding.backgroundImg.setColorFilter(Color.rgb(180,180,180), PorterDuff.Mode.MULTIPLY);
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
+    }
+
+    /**
+     * 设置进度条
+     * @param curTime
+     */
+    private void setProgressBar(int curTime){
+
+
+        binding.curTime.setText(formatTime(curTime));
+        binding.endTime.setText(formatTime(SongPlayer.getDuration()));
+
+        float rate = curTime*1f/SongPlayer.getDuration();
+        binding.progressBar.setRate(rate);
+    }
+
+    private String formatTime(int mesc){
+        mesc = mesc/1000;
+        int minute = mesc/60;
+        int second = mesc%60;
+        String time = "";
+        if(minute < 10){
+            time += "0"+minute;
+        }else{
+            time += minute;
+        }
+        time += ":";
+        if(second < 10){
+            time += "0"+second;
+        }else{
+            time += second;
+        }
+        return time;
+    }
 
     @Override
     public void onBackPressed() {
@@ -160,15 +286,8 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        /*//停止播放
-        if(SongUtil.player.isPlaying()){
-            SongUtil.player.stop();
-        }
-        //释放资源
-        SongUtil.player.release();*/
 
         SongPlayer.removeOnPlayListener(onPlayListener);
-        Log.e("tag", "play onDestroy");
 
     }
 
@@ -176,26 +295,6 @@ public class PlayActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        binding.rotatingRecord.setSongList(SongUtil.songList);
-//        binding.rotatingRecord.setCurrentPage(SongUtil.songList.indexOf(SongUtil.song));
-        //标题
-//        binding.toolbar.setTitle(SongUtil.song.getName());
-//        binding.toolbar.setSubtitle(SongUtil.song.getArtist());
-
-
-        //设置唱片滑动事件
-//        binding.rotatingRecord.currentSongPhone = new Phone1<Integer>() {
-//            @Override
-//            public void onPhone(Integer position) {
-//
-//                SongUtil.song = SongUtil.songList.get(position);
-//                SongUtil.isPrepared = false;
-//
-//                //标题
-//                binding.toolbar.setTitle(SongUtil.song.getName());
-//                binding.toolbar.setSubtitle(SongUtil.song.getArtist());
-//            }
-//        };
 
     }
 
