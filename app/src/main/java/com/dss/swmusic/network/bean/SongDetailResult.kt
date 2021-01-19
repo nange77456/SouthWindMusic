@@ -53,5 +53,10 @@ data class Al(
         /**
          * 专辑封面图
          */
-        var picUrl:String
+        var picUrl:String,
+
+        /**
+         * 专辑封面图id
+         */
+        var picId:String
 )

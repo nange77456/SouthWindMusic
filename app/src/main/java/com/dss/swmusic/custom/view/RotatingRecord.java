@@ -179,6 +179,20 @@ public class RotatingRecord extends FrameLayout {
         this.onPageChangeListener = pageChangeListener;
     }
 
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        recordPager.setOnClickListener(l);
+    }
+
+    public void updateNextSong(){
+        Log.e(TAG, "updateNextSong: ");
+        recordPager.updateNextSong();
+    }
+
+    public void updateLastSong(){
+        Log.e(TAG, "updateLastSong: " );
+        recordPager.updateLastSong();
+    }
 
     // 给外部调用的生命周期函数
     public void onPlay(){

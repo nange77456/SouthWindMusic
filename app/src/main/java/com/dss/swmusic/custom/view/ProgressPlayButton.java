@@ -17,7 +17,7 @@ public class ProgressPlayButton extends View implements View.OnClickListener {
     private float rate = 0.5f;
 
     private Paint paint = new Paint();
-    private int color = Color.parseColor("#333333");
+    private int color = Color.parseColor("#aa333333");
     private int color2 = Color.parseColor("#f50057");
 
     /**
@@ -53,7 +53,7 @@ public class ProgressPlayButton extends View implements View.OnClickListener {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        paint.setStrokeWidth(5);
+        paint.setStrokeWidth(3);
         paint.setColor(color);
         paint.setAntiAlias(true);
         paint.setStrokeCap(Paint.Cap.ROUND);
@@ -102,6 +102,11 @@ public class ProgressPlayButton extends View implements View.OnClickListener {
         paint.setColor(color2);
         canvas.drawLine(x1,y1,x2,y2,paint);
         canvas.drawLine(x3,y3,x4,y4,paint);
+    }
+
+    public void setIsPlaying(boolean isPlaying){
+        this.isPlaying = isPlaying;
+        invalidate();
     }
 
     /**

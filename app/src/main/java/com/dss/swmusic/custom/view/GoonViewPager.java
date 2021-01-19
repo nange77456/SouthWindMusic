@@ -11,6 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
 
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewConfigurationCompat;
 
 import java.util.LinkedList;
@@ -88,7 +89,7 @@ public class GoonViewPager<T extends View> extends ViewGroup {
     private final int scrollDuration = 400;
 
 
-
+    private OnClickListener onClickListener;
 
 
     public GoonViewPager(Context context, AttributeSet attrs) {
@@ -97,14 +98,24 @@ public class GoonViewPager<T extends View> extends ViewGroup {
         mScroller = new Scroller(context);
         ViewConfiguration configuration = ViewConfiguration.get(context);
         // 获取TouchSlop值
-        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
+//        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
+        mTouchSlop = configuration.getScaledTouchSlop();
+        Log.e(TAG, "GoonViewPager: mTouchSlop = "+mTouchSlop);
     }
 
     public void setAdapter(Adapter<T> adapter) {
         this.adapter = adapter;
         for (int i = 0; i < 3; ++i) {
             T view = adapter.createView();
-            view.setClickable(true);
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e(TAG, "onClick: ");
+                    if(onClickListener != null){
+                        onClickListener.onClick(v);
+                    }
+                }
+            });
             viewList.add(view);
             addView(view);
         }
@@ -153,6 +164,7 @@ public class GoonViewPager<T extends View> extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.e(TAG, "onInterceptTouchEvent: event = "+ev.getAction());
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mXDown = ev.getRawX();
@@ -160,11 +172,14 @@ public class GoonViewPager<T extends View> extends ViewGroup {
                 mXLastMove = mXDown;
                 break;
             case MotionEvent.ACTION_MOVE:
+                Log.e(TAG, "onInterceptTouchEvent: ACTION_MOVE");
                 mXMove = ev.getRawX();
                 float diff = Math.abs(mXMove - mXDown);
+                Log.e(TAG, "onInterceptTouchEvent: diff = "+diff);
                 mXLastMove = mXMove;
                 // 当手指拖动值大于TouchSlop值时，认为应该进行滚动，拦截子控件的事件
                 if (diff > mTouchSlop) {
+                    Log.e(TAG, "onInterceptTouchEvent: 拦截");
                     return true;
                 }
                 break;
@@ -174,12 +189,12 @@ public class GoonViewPager<T extends View> extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        Log.e(TAG, "onTouchEvent: action = " + event.getAction());
-//        if(gestureDetector.onTouchEvent(event)){
-//            return true;
-//        }
+        Log.e(TAG, "onTouchEvent: action = " + event.getAction());
         switch (event.getAction()) {
-
+            case MotionEvent.ACTION_DOWN:
+                Log.e(TAG, "onTouchEvent: action_down");
+//                return true;
+                break;
             case MotionEvent.ACTION_MOVE:
                 onScroll();
                 mXMove = event.getRawX();
@@ -187,14 +202,16 @@ public class GoonViewPager<T extends View> extends ViewGroup {
 
                 scrollBy(scrolledX, 0);
                 mXLastMove = mXMove;
+
+
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e(TAG,"action_up");
+                Log.e(TAG, "onTouchEvent: action_up");
                 // 计算速度
                 long dTime = System.currentTimeMillis()-mXDownTime;
                 float dx = event.getRawX()-mXDown;
                 float speed = dx/dTime * 1000;
-                Log.e(TAG, "onTouchEvent: speed = "+speed );
+//                Log.e(TAG, "onTouchEvent: speed = "+speed );
                 if(speed < -fillingSpeed){
                     // 向右滑
                     moveToTarget(curPosition+1);
@@ -212,19 +229,38 @@ public class GoonViewPager<T extends View> extends ViewGroup {
                     moveToTarget(targetIndex);
                 }
 
-
                 break;
         }
         return super.onTouchEvent(event);
     }
 
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        this.onClickListener = l;
+    }
+
     private void moveToTarget(int targetIndex){
         targetPosition = targetIndex;
         int dx = targetIndex * getWidth() - getScrollX();
-        Log.e(TAG, "onTouchEvent: targetIndex = " + targetIndex);
+//        Log.e(TAG, "onTouchEvent: targetIndex = " + targetIndex);
         // 第二步，调用startScroll()方法来初始化滚动数据并刷新界面
         mScroller.startScroll(getScrollX(), 0, dx, 0,scrollDuration);
         invalidate();
+    }
+
+    /**
+     * 更新下一首歌数据
+     */
+    public void updateNextSong(){
+        Log.e(TAG, "updateNextSong:" );
+        adapter.setNextData(viewList.getLast());
+    }
+
+    /**
+     * 更新上一首歌数据
+     */
+    public void updateLastSong(){
+        adapter.setLastData(viewList.getFirst());
     }
 
     /**

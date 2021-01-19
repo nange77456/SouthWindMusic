@@ -1,5 +1,6 @@
 package com.dss.swmusic.me
 
+import `fun`.inaction.dialog.dialogs.CommonDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -11,12 +12,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.dss.swmusic.ActivityCollector
 import com.dss.swmusic.R
 import com.dss.swmusic.adapter.MeFunctionGroupAdapter
 import com.dss.swmusic.adapter.MePlayListAdapter
 import com.dss.swmusic.adapter.diff.PlayListDiffCallback
 import com.dss.swmusic.databinding.FragmentMeBinding
 import com.dss.swmusic.entity.MeFunctionItem
+import com.dss.swmusic.entity.StartActivity
+import com.dss.swmusic.event.PlayListUpdateEvent
 import com.dss.swmusic.me.viewmodel.MeViewModel
 import com.dss.swmusic.network.OkCallback
 import com.dss.swmusic.network.ServiceCreator
@@ -25,12 +29,18 @@ import com.dss.swmusic.network.bean.CountResult
 import com.dss.swmusic.network.bean.LevelResult
 import com.dss.swmusic.network.bean.PlayList
 import com.dss.swmusic.network.bean.PlayListResult
+import com.dss.swmusic.util.DiskCacheUtil
 import com.dss.swmusic.util.UserBaseDataUtil
 import kotlinx.android.synthetic.main.fragment_me.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import retrofit2.Call
 import retrofit2.Response
 
 class MeFragment : Fragment() {
+
+    private val TAG = "MeFragment"
 
     private var _binding: FragmentMeBinding? = null
     private val binding get() = _binding!!
@@ -68,19 +78,23 @@ class MeFragment : Fragment() {
     init {
         // 初始化 FunctionGroupData
         functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
-        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
+        functionGroupData.add(MeFunctionItem(R.drawable.ic_logout, "退出登录"))
+        functionGroupData.add(MeFunctionItem(R.drawable.ic_setting, "设置"))
+        functionGroupData.add(MeFunctionItem(R.drawable.ic_about, "关于"))
+//        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
+//        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
+//        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
+//        functionGroupData.add(MeFunctionItem(R.drawable.ic_download_me, "本地下载"))
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?
+                              , savedInstanceState: Bundle?): View? {
         _binding = FragmentMeBinding.inflate(inflater, container, false)
 
+        EventBus.getDefault().register(this)
         return binding.root
     }
 
@@ -94,9 +108,42 @@ class MeFragment : Fragment() {
         functionGroupRecyclerView.layoutManager = GridLayoutManager(context, 4)
         functionGroupAdapter.setOnItemClickListener { _, _, position ->
             when (position) {
+                // 跳转本地音乐
                 0 -> {
-                    // 跳转本地音乐
                     val intent = Intent(context, LocalMusicActivity::class.java)
+                    startActivity(intent)
+                }
+                // 退出登录
+                1 -> {
+                    context?.let{context ->  
+                        with(CommonDialog(context)){
+                            setTitle("提示")
+                            setContent("退出登录将会清空缓存和数据，是否确定退出？")
+                            onConfirmClickListener = {
+                                val intent = Intent(context,StartActivity::class.java)
+                                DiskCacheUtil.deleteAllCache()
+                                UserBaseDataUtil.deleteAllData()
+                                startActivity(intent)
+                                activity?.finish()
+                                dismiss()
+                            }
+                            onCancelClickListener = {
+
+                                dismiss()
+                            }
+                            show()
+                        }
+                    }
+
+                }
+                // 设置
+                2 -> {
+                    val intent = Intent(context,SettingActivity::class.java)
+                    startActivity(intent)
+                }
+                // 关于
+                3 -> {
+                    val intent = Intent(context,AboutActivity::class.java)
                     startActivity(intent)
                 }
             }
@@ -148,6 +195,7 @@ class MeFragment : Fragment() {
         // 设置我喜欢的音乐的点击事件
         likedPlayList.setOnClickListener {
             activity?.let {
+                Log.e(TAG, "onViewCreated: 点击的歌单：${viewModel.likedPlayList.value!!.id}")
                 PlayListDetailActivity.start(it,viewModel.likedPlayList.value!!.id)
             }
         }
@@ -155,6 +203,7 @@ class MeFragment : Fragment() {
         // 设置歌单RecyclerView点击事件
         createdPlayListAdapter.setOnItemClickListener{ _, _, position ->
             activity?.let {
+                Log.e(TAG, "onViewCreated: 点击的歌单：${viewModel.createdPlayList.value!![position].id}" )
                 PlayListDetailActivity.start(it,viewModel.createdPlayList.value!![position].id)
             }
         }
@@ -202,8 +251,17 @@ class MeFragment : Fragment() {
         }
     }
 
+    /**
+     * 歌单更新时重新请求数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPlaylistUpdateEvent(event: PlayListUpdateEvent){
+        viewModel.requestPlayListData()
+    }
+
     override fun onDestroyView() {
         _binding = null
+        EventBus.getDefault().unregister(this)
         super.onDestroyView()
     }
 }

@@ -27,6 +27,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.dss.swmusic.ActivityCollector;
 import com.dss.swmusic.MainActivity;
 import com.dss.swmusic.R;
+import com.dss.swmusic.cache.RecentPlayCache;
 import com.dss.swmusic.entity.PlayerSong;
 import com.dss.swmusic.entity.Song;
 import com.dss.swmusic.me.PlayActivity;
@@ -73,6 +74,7 @@ public class MusicService extends Service {
         public void onStop() {
             Log.e(TAG, "onStop: " );
             setPlayButton(false);
+            cacheRecentPlay();
         }
 
         @Override
@@ -246,8 +248,15 @@ public class MusicService extends Service {
      */
     private void setRemoteView(String picUrl,String name,String artistName,String albumName){
 
-        Log.e("tag","picUrl="+picUrl+", name="+name+", artistName="+artistName+", albumName="+albumName);
+        Log.e(TAG,"picUrl="+picUrl+", name="+name+", artistName="+artistName+", albumName="+albumName);
 
+        // 设置大布局
+        notificationBigLayout.setTextViewText(R.id.song,name);
+        notificationBigLayout.setTextViewText(R.id.artist,artistName+"-"+albumName);
+
+        // 设置小布局
+        notificationSmallLayout.setTextViewText(R.id.song,name);
+        notificationSmallLayout.setTextViewText(R.id.artist,artistName+"-"+albumName);
         // 设置图片
         Glide.with(this)
                 .asBitmap()
@@ -257,13 +266,7 @@ public class MusicService extends Service {
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         notificationBigLayout.setImageViewBitmap(R.id.cover,resource);
                         notificationSmallLayout.setImageViewBitmap(R.id.cover,resource);
-                        // 设置大布局
-                        notificationBigLayout.setTextViewText(R.id.song,name);
-                        notificationBigLayout.setTextViewText(R.id.artist,artistName+"-"+albumName);
 
-                        // 设置小布局
-                        notificationSmallLayout.setTextViewText(R.id.song,name);
-                        notificationSmallLayout.setTextViewText(R.id.artist,artistName+"-"+albumName);
 
 
                         notificationManager.notify(NOTIFICATION_ID,notificationBuilder.build());
@@ -322,10 +325,17 @@ public class MusicService extends Service {
         return new MusicBinder();
     }
 
+    private void cacheRecentPlay(){
+        RecentPlayCache recentPlayCache = new RecentPlayCache();
+        recentPlayCache.cachePlayList(SongPlayer.getPlayList());
+        recentPlayCache.cacheLastSongIndex(SongPlayer.getCurSongIndex());
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         SongPlayer.removeOnPlayListener(onPlayListener);
         unregisterReceiver(broadcastReceiver);
+        cacheRecentPlay();
     }
 }

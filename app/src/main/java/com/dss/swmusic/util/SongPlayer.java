@@ -1,6 +1,7 @@
 package com.dss.swmusic.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -8,7 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.dss.swmusic.entity.PlayerSong;
-import com.dss.swmusic.me.PlayActivity;
+import com.dss.swmusic.service.MusicService;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -41,7 +42,7 @@ public class SongPlayer {
     /**
      * 当前播放的歌曲在列表中的索引
      */
-    private static int curPlaySongIndex = 0;
+    private static int curPlaySongIndex = -1;
 
     /**
      * 上一首播放的歌曲在列表中的索引
@@ -64,6 +65,11 @@ public class SongPlayer {
     private static boolean isPlaying = false;
 
     /**
+     * 歌曲资源是否准备就绪（如网络资源是否已正确加载）
+     */
+    private static boolean isPrepared = false;
+
+    /**
      * 循环类型
      */
     private static int turnType = TurnType.SEQUENCE;
@@ -72,6 +78,11 @@ public class SongPlayer {
      * 播放监听接口
      */
     private static List<OnPlayListener> playListenerList = new LinkedList<>();
+
+    /**
+     * 是否是第一次播放
+     */
+    private static boolean isFirstPlay = true;
 
     private static Context context;
 
@@ -100,6 +111,7 @@ public class SongPlayer {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                Log.e(TAG, "onCompletion: 触发歌曲结束");
                 SongPlayer.onCompletion();
             }
         });
@@ -114,19 +126,23 @@ public class SongPlayer {
      * @param url
      */
     private static void play(String url) {
+        Log.e(TAG, "play: 播放网络歌曲："+url);
+        isPrepared = false;
+        if(isFirstPlay){
+            onFirstPlay();
+            isFirstPlay =false;
+        }
         mediaPlayer.reset();
         try {
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    Log.e(TAG, "prepare 完成");
-                    mediaPlayer.start();
-                    // 生命周期
-                    onStart();
-                    state = State.PLAYING;
-                }
+            mediaPlayer.setOnPreparedListener(mp -> {
+                Log.e(TAG, "prepare 完成");
+                isPrepared = true;
+                mediaPlayer.start();
+                // 生命周期
+                onStart();
+                state = State.PLAYING;
             });
         } catch (IOException e) {
             Log.e(TAG, "异常");
@@ -162,6 +178,11 @@ public class SongPlayer {
      * @param uri
      */
     private static void play(Uri uri) {
+        isPrepared = false;
+        if(isFirstPlay){
+            onFirstPlay();
+            isFirstPlay =false;
+        }
         mediaPlayer.reset();
         try {
             mediaPlayer.setDataSource(context, uri);
@@ -172,11 +193,22 @@ public class SongPlayer {
         mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                isPrepared = true;
                 mediaPlayer.start();
                 onStart();
                 state = State.PLAYING;
             }
         });
+    }
+
+    /**
+     * 给播放器设置歌单和当前歌曲
+     * @param songs
+     * @param curIndex
+     */
+    public static void setPlayList(List<PlayerSong> songs,int curIndex){
+        songList = songs;
+        curPlaySongIndex = curIndex;
     }
 
     /**
@@ -194,6 +226,11 @@ public class SongPlayer {
         }
     }
 
+    /**
+     * 播放歌曲，如果该歌曲不在播放列表中，则自动添加
+     * @param song 歌曲
+     * @param addToPlayList 是否加入播放列表，如果不在，也会自动加入
+     */
     public static void play(PlayerSong song, Boolean addToPlayList) {
         // 把歌曲添加到当前播放列表
         if (addToPlayList) {
@@ -205,19 +242,33 @@ public class SongPlayer {
                 play(song,true);
             }
         }
+        specialUpdateLastSong();
+        specialUpdateNextSong();
         // 播放歌曲
         playPlayerSong(song);
     }
 
+    /**
+     * 播放歌曲，如果该歌曲不在播放列表中，则自动加入播放列表
+     * @param song 歌曲
+     */
     public static void play(PlayerSong song) {
         play(song, false);
     }
 
+    /**
+     * 播放歌曲并修改播放列表
+     * @param song
+     * @param songs
+     */
     public static void play(PlayerSong song, List<PlayerSong> songs) {
         // 修改播放列表
         songList.clear();
         songList.addAll(songs);
         curPlaySongIndex = songList.indexOf(song);
+
+        specialUpdateLastSong();
+        specialUpdateNextSong();
         // 播放歌曲
         playPlayerSong(song);
     }
@@ -236,11 +287,18 @@ public class SongPlayer {
      * 继续播放
      */
     public static void goon() {
-        mediaPlayer.start();
+        Log.e(TAG, "goon: ");
+        if(!isPrepared){
+            Log.e(TAG, "goon: 资源未准备，调用play方法");
+            play(getCurSong());
+        }else{
+            mediaPlayer.start();
+            state = State.PLAYING;
+            onGoon();
+            onPlay();
+        }
 //        onPlaying();
-        state = State.PLAYING;
-        onGoon();
-        onPlay();
+
     }
 
     /**
@@ -286,9 +344,34 @@ public class SongPlayer {
      */
     public static void setPlayTurn(int playTurn){
         turnType = playTurn;
+        specialUpdateNextSong();
+        specialUpdateLastSong();
+    }
+
+    /**
+     * 修改下一首播放
+     * @param song
+     */
+    public static void setNextPlay(PlayerSong song){
+        int nextIndex = songList.indexOf(song);
+        if(nextIndex == -1){
+            songList.add(song);
+            nextIndex = songList.size()-1;
+        }
+        nextPlaySongIndex = nextIndex;
+        onUpdateNextSong();
+
     }
 
     // 生命周期相关函数
+
+    /**
+     * 首次用播放器播放歌曲时调用此方法
+     */
+    private static void onFirstPlay(){
+        Intent intent = new Intent(context, MusicService.class);
+        context.startService(intent);
+    }
 
     /**
      * 歌曲开始播放时回调此方法
@@ -336,8 +419,14 @@ public class SongPlayer {
         // 修改生命周期状态
         state = State.OVER;
 
-        // 播放下一首
-        playNext();
+        // 如果是单曲循环则重复播放
+        if(turnType == TurnType.REPEAT){
+            seekTo(0);
+            goon();
+        }else{
+            // 否则播放下一首
+            playNext();
+        }
     }
 
     /**
@@ -383,6 +472,27 @@ public class SongPlayer {
     }
 
     /**
+     * 此方法会在下一首歌曲已确定的情况下异常更换时调用
+     * 例如，切换列表循环方式导致的下一首更换
+     */
+    private static void onUpdateNextSong(){
+        for (OnPlayListener listener : playListenerList) {
+            listener.onSpecialUpdateNextSong();
+        }
+
+    }
+
+    /**
+     * 此方法会在上一首歌曲已确定的情况下异常更换时调用
+     * 例如，切换列表循环方式导致的上一首更换
+     */
+    private static void onUpdateLastSong(){
+        for (OnPlayListener listener : playListenerList) {
+            listener.onSpecialUpdateLastSong();
+        }
+    }
+
+    /**
      * 设置播放监听接口
      *
      * @param onPlayListener
@@ -408,6 +518,9 @@ public class SongPlayer {
      * @return
      */
     public static PlayerSong getCurSong() {
+        if(curPlaySongIndex == -1){
+            return null;
+        }
         return songList.get(curPlaySongIndex);
     }
 
@@ -453,6 +566,11 @@ public class SongPlayer {
      * @return
      */
     public static int getCurrentPosition() {
+
+        if(!isPrepared){
+            return 0;
+        }
+//        Log.e(TAG, "getCurrentPosition: getDuration = "+mediaPlayer.getDuration());
         return Math.max(mediaPlayer.getCurrentPosition(), 0);
     }
 
@@ -482,6 +600,14 @@ public class SongPlayer {
         return state;
     }
 
+    /**
+     * 获取播放顺序
+     * @return
+     */
+    public static int getPlayTurn(){
+        return turnType;
+    }
+
     // 工具函数
 
     /**
@@ -491,15 +617,14 @@ public class SongPlayer {
     private static int getNextSongIndex() {
         switch (turnType) {
             // 顺序播放
+            // 单曲循环
             case TurnType.SEQUENCE:
+            case TurnType.REPEAT:
                 if (curPlaySongIndex + 1 >= songList.size()) {
                     return 0;
                 } else {
                     return curPlaySongIndex + 1;
                 }
-                // 单曲循环
-            case TurnType.REPEAT:
-                return curPlaySongIndex;
             // 随机播放
             case TurnType.RANDOM:
                 return new Random().nextInt(songList.size());
@@ -527,6 +652,22 @@ public class SongPlayer {
                 return new Random().nextInt(songList.size());
         }
         return -1;
+    }
+
+    /**
+     * 更新下一首歌曲
+     */
+    private static void specialUpdateNextSong(){
+        nextPlaySongIndex = getNextSongIndex();
+        onUpdateNextSong();
+    }
+
+    /**
+     * 更新上一首歌曲
+     */
+    private static void specialUpdateLastSong(){
+        lastPlaySongIndex = getLastSongIndex();
+        onUpdateLastSong();
     }
 
     /**
@@ -616,6 +757,18 @@ public class SongPlayer {
          */
         void onOver();
 
+        /**
+         * 更新下一首歌曲
+         *  此方法不会在每次播放下一首或上一首时调用
+         *  而是在下一首已确定的情况下更新时调用，例如更改循环方式导致的下一首变化
+         */
+        void onSpecialUpdateNextSong();
+
+        /**
+         * 更新上一首歌曲，类似于 onUpdateNextSong()
+         */
+        void onSpecialUpdateLastSong();
+
     }
 
     /**
@@ -659,6 +812,16 @@ public class SongPlayer {
 
         @Override
         public void onOver() {
+
+        }
+
+        @Override
+        public void onSpecialUpdateNextSong() {
+
+        }
+
+        @Override
+        public void onSpecialUpdateLastSong() {
 
         }
     }

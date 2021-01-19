@@ -15,13 +15,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.dss.swmusic.BaseActivity
+import com.dss.swmusic.R
 import com.dss.swmusic.adapter.PlayListAdapter
 import com.dss.swmusic.adapter.diff.SongDiffCallback
 import com.dss.swmusic.databinding.ActivityPlayListDetailBinding
 import com.dss.swmusic.discover.viewmodel.DailyRecommendViewModel
 import com.dss.swmusic.network.bean.Song
-import com.dss.swmusic.util.height
-import com.dss.swmusic.util.width
+import com.dss.swmusic.util.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zhouwei.blurlibrary.EasyBlur
@@ -36,10 +36,16 @@ class DailyRecommendActivity : BaseActivity() {
 
     private val adapter = PlayListAdapter()
 
+    private val songBarHelper = SongBarHelper()
+
     private val viewModel: DailyRecommendViewModel by lazy {
         ViewModelProvider(this).get(DailyRecommendViewModel::class.java)
     }
 
+    /**
+     * 是否已传入播放歌单
+     */
+    private var flag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +78,36 @@ class DailyRecommendActivity : BaseActivity() {
             playListNumText.text = "（共${it.size}首）"
         }
 
+        // “播放全部” 的点击事件
+        playAllView.setOnClickListener {
+            val songs = adapter.data
+            if(songs.size != 0){
+                SongPlayer.play(songs[0].toPlayerSong(),songs.toPlayerSongList())
+            }
+        }
+
         // 设置RecyclerView 点击事件
         adapter.setOnItemClickListener { _, _, position ->
-            // TODO 点击歌曲
+            val songList = adapter.data
+            val song = songList[position]
+            if(!flag){
+                SongPlayer.play(song.toPlayerSong(),songList.toPlayerSongList())
+                flag = true
+            }else{
+                SongPlayer.play(song.toPlayerSong())
+            }
+        }
+        // 更多按钮的点击事件
+        adapter.addChildClickViewIds(R.id.moreButton)
+        adapter.setOnItemChildClickListener { adapter, view, position ->
+            if(view.id == R.id.moreButton){
+
+                val songList = this.adapter.data
+                val song = songList[position]
+
+                val dialog = SongOpDialog(this,song.toPlayerSong())
+                dialog.show()
+            }
         }
 
     }
@@ -132,6 +165,16 @@ class DailyRecommendActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        songBarHelper.setSongBar(this,songBar)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        songBarHelper.release()
     }
 
     /**

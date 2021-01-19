@@ -115,4 +115,18 @@ object UserBaseDataUtil {
         editor.apply()
     }
 
+    /**
+     * 删除所有文件
+     */
+    fun deleteAllData(){
+        val sharedPreference = MyApplication.getContext()
+                .getSharedPreferences(USER_BASE_DATA_FILE_NAME, MODE_PRIVATE)
+        val editor = sharedPreference.edit()
+        editor.clear()
+        editor.commit()
+
+        cookie = null
+        userBaseData = null
+    }
+
 }

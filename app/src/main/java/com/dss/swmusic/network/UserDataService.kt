@@ -35,6 +35,8 @@ interface UserDataService {
     @GET("/user/playlist")
     fun getUserPlayListInfo(@Query("cookie") cookie: String,
                             @Query("uid") uid: Long,
-                            @Query("limit") limit: Int): Call<PlayListResult>
+                            @Query("limit") limit: Int,
+                            @Query("timestamp") timestamp: Long = System.currentTimeMillis())
+            : Call<PlayListResult>
 
 }

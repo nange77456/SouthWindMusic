@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dss.swmusic.R;
+import com.dss.swmusic.entity.PlayerSong;
 import com.dss.swmusic.entity.Song;
+import com.dss.swmusic.util.ExtensionKt;
 import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
     /**
      * 本地音乐列表，由构造函数传入
      */
-    private List<Song> songList;
+    private List<PlayerSong> songList;
     /**
      * 歌曲位置值回调接口
      */
@@ -31,7 +33,7 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
         this.songPositionPhone = songPositionPhone;
     }
 
-    public LocalSongAdapter(List<Song> songList) {
+    public LocalSongAdapter(List<PlayerSong> songList) {
         this.songList = songList;
     }
 
@@ -66,9 +68,9 @@ public class LocalSongAdapter extends RecyclerView.Adapter<LocalSongAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Song curr = songList.get(position);
+        PlayerSong curr = songList.get(position);
         holder.nameText.setText(curr.getName());
-        holder.artistAndAlbumText.setText(curr.getArtist()+" - "+curr.getAlbum());
+        holder.artistAndAlbumText.setText(ExtensionKt.toNiceString(curr.getArtists()) +" - "+curr.getAlbums().getName());
     }
 
     @Override

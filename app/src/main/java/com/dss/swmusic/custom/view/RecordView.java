@@ -3,6 +3,7 @@ package com.dss.swmusic.custom.view;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.dss.swmusic.R;
 
 public class RecordView extends FrameLayout {
+
+    private final String TAG = "RecordView";
 
     private ImageView imageView;
 
@@ -45,6 +48,7 @@ public class RecordView extends FrameLayout {
     }
 
     public void setImage(String url){
+        Log.e(TAG, "setImage: "+url );
         Glide.with(imageView)
                 .load(url)
                 .into(imageView);

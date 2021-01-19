@@ -9,6 +9,8 @@ import com.dss.swmusic.util.SongPlayer;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.shuyu.gsyvideoplayer.video.GSYADVideoPlayer;
 
+import org.litepal.LitePal;
+
 public class MyApplication extends Application {
 
     private static Context context;
@@ -26,6 +28,7 @@ public class MyApplication extends Application {
         context = getApplicationContext();
         SongPlayer.init(context);
         handler = new Handler(Looper.myLooper());
+        LitePal.initialize(this);
     }
 
     public static Context getContext(){

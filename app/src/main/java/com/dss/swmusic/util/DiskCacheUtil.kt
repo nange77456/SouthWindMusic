@@ -101,4 +101,28 @@ object DiskCacheUtil {
         return gson.fromJson<T>(content, object: TypeToken<T>(){}.type)
     }
 
+    /**
+     * 删除所有缓存
+     */
+    fun deleteAllCache(){
+        val file = MyApplication.getContext().externalCacheDir
+        file?.let {
+            deleteDir(it)
+        }
+    }
+
+    /**
+     * 删除文件夹
+     */
+    fun deleteDir(dir:File){
+        val files = dir.listFiles()
+        for(file in files){
+            if(file.isDirectory){
+                deleteDir(file)
+            }
+            file.delete()
+        }
+        dir.delete()
+    }
+
 }

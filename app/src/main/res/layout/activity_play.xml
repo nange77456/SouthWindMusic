@@ -22,7 +22,7 @@
         android:id="@+id/lyricView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#FFEBEE"
+        android:overScrollMode="never"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,6 +62,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <com.dss.swmusic.custom.view.TurnButton
+            android:id="@+id/turnButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="30dp" />
+
         <ImageView
             android:id="@+id/lastSong"
             android:layout_width="25dp"
@@ -84,6 +91,17 @@
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"
             app:srcCompat="@drawable/ic_next_song" />
+
+        <ImageView
+            android:id="@+id/playListIcon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"
+            app:srcCompat="@drawable/ic_play_list"
+            app:tint="#ffffff" />
+
+
     </LinearLayout>
 
     <ImageView

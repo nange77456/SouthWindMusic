@@ -1,5 +1,6 @@
 package com.dss.swmusic.discover
 
+import `fun`.inaction.dialog.dialogs.CommonDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -122,10 +123,14 @@ class DiscoverFragment : Fragment() {
             when (position) {
                 // 每日推荐
                 0 -> {
-                    activity?.let{
-                        val intent = Intent(it,DailyRecommendActivity::class.java)
+                    activity?.let {
+                        val intent = Intent(it, DailyRecommendActivity::class.java)
                         startActivity(intent)
                     }
+                }
+                // 私人fm
+                1 -> {
+                    showNoImplementDialog()
                 }
                 // 私人雷达
                 2 -> {
@@ -137,6 +142,31 @@ class DiscoverFragment : Fragment() {
                         }
                     }
                 }
+                // 歌单
+                3 -> {
+                    showNoImplementDialog()
+                }
+                // 排行榜
+                4 -> {
+                    showNoImplementDialog()
+                }
+            }
+        }
+    }
+
+    private fun showNoImplementDialog() {
+        context?.let {
+            val dialog = CommonDialog(it)
+            with(dialog) {
+                setTitle("提示")
+                setContent("暂未实现，下次一定！")
+                onConfirmClickListener = {
+                    dialog.dismiss()
+                }
+                onCancelClickListener = {
+                    dialog.dismiss()
+                }
+                show()
             }
         }
     }

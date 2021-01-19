@@ -2,7 +2,6 @@ package com.dss.swmusic.me
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,21 +9,26 @@ import com.bumptech.glide.Glide
 import com.dss.swmusic.BaseActivity
 import com.dss.swmusic.R
 import com.dss.swmusic.adapter.PlayListAdapter
-import com.dss.swmusic.adapter.diff.SongDiffCallback
 import com.dss.swmusic.custom.view.LoadingView
 import com.dss.swmusic.databinding.ActivitySearchResultBinding
 import com.dss.swmusic.me.viewmodel.SearchResultViewModel
 import com.dss.swmusic.me.viewmodel.SearchResultViewModelFactory
 import com.dss.swmusic.network.bean.Song
+import com.dss.swmusic.util.SongBarHelper
+import com.dss.swmusic.util.SongOpDialog
+import com.dss.swmusic.util.SongPlayer
+import com.dss.swmusic.util.toPlayerSong
 import kotlinx.android.synthetic.main.activity_search_result.*
-import kotlinx.android.synthetic.main.video_layout_cover.view.*
 
 class SearchResultActivity : BaseActivity() {
 
-    private lateinit var binding : ActivitySearchResultBinding
-    private lateinit var viewModel:SearchResultViewModel
+    private val TAG = "SearchResultActivity"
+    private lateinit var binding: ActivitySearchResultBinding
+    private lateinit var viewModel: SearchResultViewModel
 
     private val adapter = PlayListAdapter()
+    private val songBarHelper = SongBarHelper()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,21 +59,35 @@ class SearchResultActivity : BaseActivity() {
 
         // 监听数据变化
         viewModel.songs.observe(this){
-//            Log.e("tag","data size = ${it.size}")
+            Log.e(TAG,"data size = ${it.size}")
             adapter.addData(it.subList(adapter.data.size,it.size))
             refreshLayout.finishLoadMore()
         }
 
-        viewModel.hasMore.observe(this){
-            if(!it){
-//                Log.e("tag","no more data")
+        viewModel.hasMore.observe(this) {
+            if (!it) {
                 footerTextView.text = "没有更多数据了"
                 refreshLayout.finishLoadMoreWithNoMoreData()
             }
         }
 
+        // item 点击事件
         adapter.setOnItemClickListener { adapter, view, position ->
-//            viewModel.queryNextPage()
+            val song : Song = adapter.data[position] as Song
+            Log.e(TAG, "onCreate: click song = $song" )
+            SongPlayer.play(song.toPlayerSong(),true)
+        }
+
+        // 更多按钮点击事件
+        adapter.addChildClickViewIds(R.id.moreButton)
+        adapter.setOnItemChildClickListener { adapter, view, position ->
+            Log.e(TAG, "onCreate: click item", )
+            if(view.id == R.id.moreButton){
+
+                val song : Song = adapter.data[position] as Song
+                val dialog = SongOpDialog(this,song.toPlayerSong())
+                dialog.show()
+            }
         }
 
         // 上拉加载的监听
@@ -79,11 +97,21 @@ class SearchResultActivity : BaseActivity() {
 
     }
 
-    companion object{
+    override fun onResume() {
+        super.onResume()
+        songBarHelper.setSongBar(this, binding.songBar)
+    }
 
-        fun start(activity: Activity,key:String){
-            val intent = Intent(activity,SearchResultActivity::class.java).apply {
-                putExtra("key",key)
+    override fun onStop() {
+        super.onStop()
+        songBarHelper.release()
+    }
+
+    companion object {
+
+        fun start(activity: Activity, key: String) {
+            val intent = Intent(activity, SearchResultActivity::class.java).apply {
+                putExtra("key", key)
             }
             activity.startActivity(intent)
         }

@@ -12,10 +12,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.dss.swmusic.BaseActivity
+import com.dss.swmusic.R
 import com.dss.swmusic.adapter.PlayListAdapter
 import com.dss.swmusic.adapter.diff.SongDiffCallback
+import com.dss.swmusic.custom.dialog.BottomSheetDialog
 import com.dss.swmusic.databinding.ActivityPlayListDetailBinding
 import com.dss.swmusic.discover.DailyRecommendActivity
+import com.dss.swmusic.event.PlayListUpdateEvent
 import com.dss.swmusic.me.viewmodel.PlayListDetailViewModel
 import com.dss.swmusic.me.viewmodel.PlayListDetailViewModelFactory
 import com.dss.swmusic.util.*
@@ -23,8 +26,14 @@ import com.zhouwei.blurlibrary.EasyBlur
 import kotlinx.android.synthetic.main.activity_play_list_detail.*
 import kotlinx.android.synthetic.main.activity_play_list_detail.barBackgroundView
 import kotlinx.android.synthetic.main.fragment_me.*
+import kotlinx.android.synthetic.main.item_play_list.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 class PlayListDetailActivity : BaseActivity() {
+
+    private final val TAG = "PlayListDetailActivity"
 
     private lateinit var binding:ActivityPlayListDetailBinding
 
@@ -32,15 +41,21 @@ class PlayListDetailActivity : BaseActivity() {
 
     private val adapter = PlayListAdapter()
 
+    private val songBarHelper = SongBarHelper()
+
     /**
      * 是否已传入播放歌单
      */
     private var flag = false
 
+    private var playListId:Long = 0;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayListDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        EventBus.getDefault().register(this)
 
         // 设置返回按钮
         icon_cancel.setOnClickListener {
@@ -48,7 +63,7 @@ class PlayListDetailActivity : BaseActivity() {
         }
 
         // 获取歌单的id，从上一个Activity传来
-        val playListId = intent.getLongExtra(KEY, 0)
+        playListId = intent.getLongExtra(KEY, 0)
 
         // 初始化ViewModel
         viewModel = PlayListDetailViewModelFactory(playListId).create(PlayListDetailViewModel::class.java)
@@ -132,14 +147,24 @@ class PlayListDetailActivity : BaseActivity() {
 
         // 监听歌曲数据变化
         viewModel.songs.observe(this){
+            Log.e(TAG, "onCreate: 歌曲数据变化,size = ${it.size},songs = $it" )
             adapter.setDiffNewData(it)
             playListNumText.text = "（共${it.size}首）"
+        }
+
+        // “播放全部” 的点击事件
+        playAllView.setOnClickListener {
+            val songs = adapter.data
+            if(songs.size != 0){
+                SongPlayer.play(songs[0].toPlayerSong(),songs.toPlayerSongList())
+            }
         }
 
         // 设置RecyclerView 点击事件
         adapter.setOnItemClickListener { _, _, position ->
             val songList = viewModel.songs.value!!
             val song = songList[position]
+            Log.e(TAG, " 点击歌曲：$song")
             if(!flag){
                 SongPlayer.play(song.toPlayerSong(),songList.toPlayerSongList())
                 flag = true
@@ -148,6 +173,40 @@ class PlayListDetailActivity : BaseActivity() {
             }
         }
 
+        // 更多按钮的点击事件
+        adapter.addChildClickViewIds(R.id.moreButton)
+        adapter.setOnItemChildClickListener { adapter, view, position ->
+            Log.e(TAG, "onCreate: click item", )
+            if(view.id == R.id.moreButton){
+
+                val songList = viewModel.songs.value!!
+                val song = songList[position]
+
+                val dialog = SongOpDialog(this,song.toPlayerSong(),playListId)
+                dialog.show()
+            }
+        }
+
+    }
+
+    /**
+     * 歌单更新时重新请求数据
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPlaylistUpdateEvent(event:PlayListUpdateEvent){
+        if(event.updatePlayListId == playListId){
+            viewModel.requestData()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        songBarHelper.setSongBar(this,songBar)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        songBarHelper.release()
     }
 
     /**
@@ -198,6 +257,11 @@ class PlayListDetailActivity : BaseActivity() {
                 .scale(1)
                 .blur();
         return arrayOf(barBitmap, showBitmap, bottomBitmap)
+    }
+
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        super.onDestroy()
     }
 
     companion object{

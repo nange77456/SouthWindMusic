@@ -1,5 +1,6 @@
 package com.dss.swmusic.me.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dss.swmusic.network.OkCallback
@@ -66,6 +67,8 @@ class SearchResultViewModel(private val key:String):ViewModel() {
     private fun searchSong2Song(searchSongs:List<SearchSong>):MutableList<Song>{
         val result = mutableListOf<Song>()
         for(searchSong in searchSongs){
+//            searchSong.album.picUrl = "https://p1.music.126.net/bXhOewEEcYvgijQKNzKk6A==/${searchSong.album.picId}.jpg"
+//            Log.e("tag", "searchSong2Song: $searchSong", )
             val song = Song(searchSong.id,searchSong.name,searchSong.duration,searchSong.artists,searchSong.album)
             result.add(song)
         }

@@ -45,18 +45,19 @@ class PlayListDetailViewModel(private val playListId:Long):ViewModel() {
             }
         }
         // 网络请求获取数据
-        requestData(playListId)
+        requestData()
     }
 
     /**
      * 发送网络请求获取数据
      */
-    fun requestData(playListId: Long){
+    fun requestData(){
         songService.getPlayListDetail(playListId,UserBaseDataUtil.getCookie())
                 .enqueue(object :OkCallback<PlayListDetailResult>(){
 
                     override fun onSuccess(result: PlayListDetailResult) {
                         playListDetail.value = result.playlist
+                        songIds.clear()
                         for(i in result.playlist.trackIds){
                             songIds.add(i.id)
                         }
@@ -78,6 +79,9 @@ class PlayListDetailViewModel(private val playListId:Long):ViewModel() {
      */
     private fun getSongsIdString():String{
         val result = StringBuilder()
+        if(songIds.size == 0){
+            return result.toString()
+        }
         for(i in 0 until songIds.size-1){
             result.append("${songIds[i]},")
         }

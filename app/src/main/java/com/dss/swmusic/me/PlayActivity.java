@@ -20,14 +20,18 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
 import com.dss.swmusic.BaseActivity;
+import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.LyricAdapter;
+import com.dss.swmusic.custom.dialog.PlayListDialog;
 import com.dss.swmusic.custom.view.ProgressBar;
 import com.dss.swmusic.custom.view.RotatingRecord;
+import com.dss.swmusic.custom.view.TurnButton;
 import com.dss.swmusic.databinding.ActivityPlayBinding;
 import com.dss.swmusic.entity.PlayerSong;
 import com.dss.swmusic.entity.Song;
 import com.dss.swmusic.service.MusicService;
 import com.dss.swmusic.util.ExtensionKt;
+import com.dss.swmusic.util.LyricUtil;
 import com.dss.swmusic.util.SongPlayer;
 import com.dss.swmusic.util.SongUtil;
 import com.dss.swmusic.util.phone.Phone1;
@@ -59,6 +63,7 @@ public class PlayActivity extends BaseActivity {
     private SongPlayer.OnPlayListener onPlayListener = new SongPlayer.SimpleOnPlayListener() {
         @Override
         public void onStart() {
+            setLyric();
         }
 
         @Override
@@ -70,6 +75,7 @@ public class PlayActivity extends BaseActivity {
         @Override
         public void onPlaying(int mesc) {
             setProgressBar(mesc);
+            binding.lyricView.setCurTime(mesc);
         }
 
         @Override
@@ -104,8 +110,22 @@ public class PlayActivity extends BaseActivity {
             binding.rotatingRecord.onLast();
         }
 
+        @Override
+        public void onSpecialUpdateNextSong() {
+            Log.e(TAG, "onSpecialUpdateNextSong: " );
+
+            binding.rotatingRecord.updateNextSong();
+
+            Log.e(TAG, "onSpecialUpdateNextSong: over");
+        }
+
+        @Override
+        public void onSpecialUpdateLastSong() {
+            Log.e(TAG, "onSpecialUpdateLastSong: " );
+            binding.rotatingRecord.updateLastSong();
+        }
     };
-    ;
+
 
 
     @Override
@@ -115,7 +135,7 @@ public class PlayActivity extends BaseActivity {
         setContentView(binding.getRoot());
 
         // 设置返回按钮的点击事件
-        binding.returnBtn.setOnClickListener(v -> finish());
+        binding.returnBtn.setOnClickListener(v -> onBackPressed());
         //设置这一页的toolbar标题
         setToolbar();
         // 设置背景图
@@ -186,6 +206,12 @@ public class PlayActivity extends BaseActivity {
             SongPlayer.playLast();
         });
 
+        // 播放列表按钮的点击事件
+        binding.playListIcon.setOnClickListener((v)->{
+            PlayListDialog dialog = new PlayListDialog(this);
+            dialog.show();
+        });
+
         // 播放监听
         SongPlayer.addOnPlayListener(onPlayListener);
 
@@ -197,6 +223,35 @@ public class PlayActivity extends BaseActivity {
             setProgressBar(curTime);
         });
 
+        // 唱片的点击事件
+        binding.rotatingRecord.setOnClickListener((v)->{
+            Log.e(TAG, "click 唱片");
+            // 显示歌词
+            binding.rotatingRecord.setVisibility(View.INVISIBLE);
+            binding.lyricView.setVisibility(View.VISIBLE);
+        });
+        // 歌词的点击
+        binding.lyricView.setOnClickListener((v)->{
+            // 显示唱片
+            binding.rotatingRecord.setVisibility(View.VISIBLE);
+            binding.lyricView.setVisibility(View.INVISIBLE);
+        });
+
+        // 设置歌词
+        setLyric();
+
+        // 设置进度条
+        setProgressBar(SongPlayer.getCurrentPosition());
+
+        // 设置播放顺序按钮
+        binding.turnButton.setTurn(SongPlayer.getPlayTurn());
+        // 播放顺序的改变监听
+        binding.turnButton.setOnTurnTypeChangeListener(new TurnButton.OnTurnTypeChangeListener() {
+            @Override
+            public void onChange(int type) {
+                SongPlayer.setPlayTurn(type);
+            }
+        });
     }
 
     /**
@@ -257,6 +312,24 @@ public class PlayActivity extends BaseActivity {
         binding.progressBar.setRate(rate);
     }
 
+    /**
+     * 设置歌词
+     */
+    private void setLyric(){
+        PlayerSong song = SongPlayer.getCurSong();
+        if(song.getId() != null){
+            LyricUtil.getLyric(song.getId(), new LyricUtil.Callback() {
+                @Override
+                public void call(String lyric) {
+                    if(lyric != null){
+                        binding.lyricView.setLyrics(lyric);
+                    }
+                }
+            });
+        }
+
+    }
+
     private String formatTime(int mesc){
         mesc = mesc/1000;
         int minute = mesc/60;
@@ -279,6 +352,7 @@ public class PlayActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.none,R.anim.slite_bottom_out);
         //把这一页的实例移到栈底，不销毁
 //        moveTaskToBack(true);
     }
@@ -290,6 +364,7 @@ public class PlayActivity extends BaseActivity {
         SongPlayer.removeOnPlayListener(onPlayListener);
 
     }
+
 
 
     @Override

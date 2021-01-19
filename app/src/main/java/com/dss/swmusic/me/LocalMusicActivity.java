@@ -12,19 +12,27 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.dss.swmusic.BaseActivity;
 import com.dss.swmusic.R;
 import com.dss.swmusic.adapter.LocalSongAdapter;
 import com.dss.swmusic.databinding.ActivityLocalMusicBinding;
+import com.dss.swmusic.entity.Album;
+import com.dss.swmusic.entity.Artist;
+import com.dss.swmusic.entity.PlayerSong;
 import com.dss.swmusic.entity.Song;
+import com.dss.swmusic.util.SongBarHelper;
+import com.dss.swmusic.util.SongPlayer;
 import com.dss.swmusic.util.SongUtil;
+import com.dss.swmusic.util.ToastUtilKt;
 import com.dss.swmusic.util.phone.Phone1;
 
 import java.util.ArrayList;
@@ -38,9 +46,11 @@ public class LocalMusicActivity extends BaseActivity {
     /**
      * 歌曲列表
      */
-    private ArrayList<Song> songList = new ArrayList<>();
+    private ArrayList<PlayerSong> songList = new ArrayList<>();
 
     private LocalSongAdapter adapter = new LocalSongAdapter(songList);
+
+    private SongBarHelper songBarHelper = new SongBarHelper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +60,9 @@ public class LocalMusicActivity extends BaseActivity {
         setContentView(binding.getRoot());
         //设置toolbar，和menu搭配使用
         setSupportActionBar(binding.toolbar);
+        binding.toolbar.setNavigationOnClickListener(v -> {
+            finish();
+        });
 
         //设置本地音乐RecyclerView
         binding.localMusicRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -57,52 +70,58 @@ public class LocalMusicActivity extends BaseActivity {
 
         //扫描本地音乐，初始化songList
         startScanLocalMusic();
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
 
         adapter.setSongPositionPhone(new Phone1<Integer>() {
             @Override
             public void onPhone(Integer position) {
-                Song song = songList.get(position);
-                Intent intent = new Intent(LocalMusicActivity.this,PlayActivity.class);
-
-                SongUtil.song = song;
-                SongUtil.isPrepared = false;
-                SongUtil.songList = songList;
-
-                startActivity(intent);
+                PlayerSong song = songList.get(position);
+                SongPlayer.play(song,songList);
             }
         });
 
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //加载menu布局文件
-        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
-
-        if(menu instanceof MenuBuilder){
-            MenuBuilder menuBuilder = (MenuBuilder) menu;
-            menuBuilder.setOptionalIconsVisible(true);
-        }
-        return true;
+    protected void onResume() {
+        super.onResume();
+        songBarHelper.setSongBar(this,binding.songBar);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            //TODO
-            case R.id.manage:break;
-            case R.id.scan:
-                startScanLocalMusic();
-                //TODO songList更新了
-
-                break;
-            case R.id.sort:break;
-            case R.id.search:break;
-        }
-        return true;
+    protected void onStop() {
+        super.onStop();
+        songBarHelper.release();
     }
+
+//    @SuppressLint("RestrictedApi")
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        //加载menu布局文件
+//        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
+//
+//        if(menu instanceof MenuBuilder){
+//            MenuBuilder menuBuilder = (MenuBuilder) menu;
+//            menuBuilder.setOptionalIconsVisible(true);
+//        }
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()){
+//            //TODO
+//            case R.id.manage:break;
+//            case R.id.scan:
+//                startScanLocalMusic();
+//                //TODO songList更新了
+//
+//                break;
+//            case R.id.sort:break;
+//            case R.id.search:break;
+//        }
+//        return true;
+//    }
 
     /**
      * 调用scanLocalMusic方法，如果没有权限就申请
@@ -152,6 +171,13 @@ public class LocalMusicActivity extends BaseActivity {
             //构造Song
             Song curr = new Song(name,path,album,artist,size,duration,parent,uriStr);
 
+            List<Artist> artistList = new ArrayList<>();
+            artistList.add(new Artist(artist));
+            PlayerSong playerSong = new PlayerSong(1,artistList,new Album(album));
+            playerSong.setUri(Uri.parse(uriStr));
+            playerSong.setName(name);
+            playerSong.setDuration(duration);
+
             /*//好像没有用
             if (size > 1000 * 800) {
                 // 注释部分是切割标题，分离出歌曲名和歌手 （本地媒体库读取的歌曲信息不规范）
@@ -162,11 +188,24 @@ public class LocalMusicActivity extends BaseActivity {
                 }
             }*/
             //添加到songList结尾
-            songList.add(curr);
+            songList.add(playerSong);
         }
         adapter.notifyDataSetChanged();
 
         cursor.close();
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    scanLocalMusic();
+                }else{
+                    ToastUtilKt.showToast("没有权限不能读取本地音乐");
+                }
+                break;
+        }
     }
 }

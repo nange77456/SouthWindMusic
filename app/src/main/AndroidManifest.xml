@@ -12,10 +12,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".me.SearchResultActivity"></activity>
+        <activity android:name=".me.AboutActivity"
+            android:theme="@style/PlayActivityTheme"></activity>
+        <activity android:name=".me.SettingActivity" />
+        <activity android:name=".me.SearchResultActivity" />
         <activity
             android:name=".me.SearchActivity"
             android:windowSoftInputMode="stateVisible" />
@@ -44,7 +48,7 @@
         </activity>
         <activity
             android:name=".me.PlayActivity"
-            android:theme = "@style/PlayListTheme"/>
+            android:theme="@style/PlayActivityTheme" />
         <activity
             android:name=".login.VerifyCodeActivity"
             android:windowSoftInputMode="stateVisible" />
@@ -72,6 +76,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentStatusTheme" />
     </application>
