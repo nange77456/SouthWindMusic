@@ -11,7 +11,11 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.dss.swmusic.R;
 import com.dss.swmusic.custom.view.MyVideoPlayer;
 import com.dss.swmusic.custom.view.SampleCoverVideo;
+import com.dss.swmusic.network.OkCallback;
+import com.dss.swmusic.network.ServiceCreator;
+import com.dss.swmusic.network.VideoService;
 import com.dss.swmusic.network.bean.VideoData;
+import com.dss.swmusic.network.bean.VideoUrlResult;
 import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder;
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack;
 import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
@@ -22,6 +26,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class VideoAdapter extends BaseQuickAdapter<VideoData, BaseViewHolder> {
 
+    private String TAG = "VideoAdapter";
+
+    private VideoService videoService = ServiceCreator.INSTANCE.create(VideoService.class);
 
     public VideoAdapter() {
         super(R.layout.item_video);
@@ -70,6 +77,136 @@ public class VideoAdapter extends BaseQuickAdapter<VideoData, BaseViewHolder> {
                 videoPlayer.getCurrentPlayer().getTitleTextView().setText(videoData.getData().getTitle());
             }
 
+        });
+
+        videoPlayer.setVideoAllCallBack(new VideoAllCallBack() {
+            @Override
+            public void onStartPrepared(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onPrepared(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickStartIcon(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickStartError(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickStop(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickStopFullscreen(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickResume(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickResumeFullscreen(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickSeekbar(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickSeekbarFullscreen(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onAutoComplete(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onComplete(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onEnterFullscreen(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onQuitFullscreen(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onQuitSmallWidget(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onEnterSmallWidget(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onTouchScreenSeekVolume(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onTouchScreenSeekPosition(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onTouchScreenSeekLight(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onPlayError(String url, Object... objects) {
+                Log.e(TAG, "onPlayError: 播放错误" );
+                // 播放错误，重新获取视频url
+                videoService.getVideoUrl(videoData.getData().getVid())
+                        .enqueue(new OkCallback<VideoUrlResult>(){
+                            @Override
+                            public void onSuccess(@NotNull VideoUrlResult result) {
+                                super.onSuccess(result);
+                                String url = result.getUrls().get(0).getUrl();
+                                Log.e(TAG, "onSuccess: 重新播放，url="+url);
+                                SampleCoverVideo videoPlayer = (SampleCoverVideo) objects[1];
+                                videoPlayer.setUp(url,true,"这是title");
+                                videoPlayer.getCurrentPlayer().startPlayLogic();
+                            }
+                        });
+            }
+
+            @Override
+            public void onClickStartThumb(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickBlank(String url, Object... objects) {
+
+            }
+
+            @Override
+            public void onClickBlankFullscreen(String url, Object... objects) {
+
+            }
         });
     }
 }

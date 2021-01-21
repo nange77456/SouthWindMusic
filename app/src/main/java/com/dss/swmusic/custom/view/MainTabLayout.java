@@ -281,7 +281,18 @@ public class MainTabLayout extends LinearLayout {
             return;
         }
 //        Log.e("MyDebug","from "+from+" ,to "+to+" ,offset"+offset);
-
+        if(from < 0){
+            from = 0;
+        }
+        if(from >= tabItems.size()){
+            from = tabItems.size()-1;
+        }
+        if(to < 0){
+            to = 0;
+        }
+        if(to >= tabItems.size()){
+            to = tabItems.size()-1;
+        }
         MainTabItem curItem = tabItems.get(from);
         MainTabItem nextItem = tabItems.get(to);
 

@@ -1,5 +1,6 @@
 package com.dss.swmusic.custom.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -61,6 +62,22 @@ public class SongBar extends FrameLayout {
             .into(albumPic);
         }else{
             Glide.with(this)
+                    .load(url)
+                    .into(albumPic);
+        }
+    }
+
+    // TODO 神奇的闪退bug
+    public void setAlbumPic(Activity activity,String url){
+        if(activity == null || activity.isFinishing()){
+            return;
+        }
+        if(url == null || url.equals("")){
+            Glide.with(activity)
+                    .load(R.drawable.play_list_default_cover)
+                    .into(albumPic);
+        }else{
+            Glide.with(activity)
                     .load(url)
                     .into(albumPic);
         }

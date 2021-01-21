@@ -32,7 +32,7 @@ public class SongBarHelper {
                 }
                 songBar.setProgressPlayBtn(true,0);
                 PlayerSong song = SongPlayer.getCurSong();
-                songBar.setAlbumPic(song.getAlbums().getPicUrl());
+                songBar.setAlbumPic(activity,song.getAlbums().getPicUrl());
                 songBar.setSongName(song.getName());
                 songBar.setArtistName(ExtensionKt.toNiceString(song.getArtists()));
             }
