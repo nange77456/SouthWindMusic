@@ -1,8 +1,10 @@
 package com.dss.swmusic.util
 
+import android.net.Uri
 import android.util.Log
 import com.dss.swmusic.MyApplication
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.*
 import kotlin.concurrent.thread
@@ -11,6 +13,11 @@ import kotlin.concurrent.thread
  * 磁盘缓存工具类，缓存文件保存在 外存/cache/目录下
  */
 object DiskCacheUtil {
+
+    val gson:Gson = GsonBuilder()
+            .registerTypeAdapter(Uri::class.java,UriSerializer())
+            .registerTypeAdapter(Uri::class.java,UriDeserializer())
+            .create();
 
     /**
      * 异步向指定文件写入字符串
@@ -69,7 +76,6 @@ object DiskCacheUtil {
      * 异步
      */
     fun <T> set(path:String,obj:T){
-        val gson = Gson()
         writeAsync(path,gson.toJson(obj))
     }
 
@@ -83,7 +89,6 @@ object DiskCacheUtil {
             if(it == null){
                 callback(null)
             }else{
-                val gson = Gson()
                 val obj = gson.fromJson<T>(it, object: TypeToken<T>(){}.type)
                 callback(obj)
             }
@@ -97,7 +102,6 @@ object DiskCacheUtil {
      */
     inline fun <reified T> getSync(path:String):T?{
         val content = readSync(path)
-        val gson = Gson()
         return gson.fromJson<T>(content, object: TypeToken<T>(){}.type)
     }
 
