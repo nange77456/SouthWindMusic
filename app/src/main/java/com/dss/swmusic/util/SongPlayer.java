@@ -679,7 +679,7 @@ public class SongPlayer {
     private static void getUrl(Long id, OnGetUrlListener onGetUrlListener) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("http://music.inaction.fun/song/url?id=" + id)
+                .url("http://music.inaction.fun/song/url?id=" + id+"&cookie"+UserBaseDataUtil.getCookie())
                 .get()
                 .build();
         client.newCall(request).enqueue(new Callback() {
